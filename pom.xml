@@ -10,6 +10,21 @@
   <name>chiisai</name>
   <url>http://maven.apache.org</url>
 
+	<build>
+    	<plugins>
+        	<plugin>
+            	<groupId>org.apache.maven.plugins</groupId>
+            	<artifactId>maven-jar-plugin</artifactId>
+            	<configuration>
+                	<archive>
+                    	<manifest>
+                        	<mainClass>nihongo.chiisaidb.UI</mainClass>
+                    	</manifest>
+               		</archive>
+            	</configuration>
+        	</plugin>
+    	</plugins>
+    </build>
   <properties>
     <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
   </properties>
