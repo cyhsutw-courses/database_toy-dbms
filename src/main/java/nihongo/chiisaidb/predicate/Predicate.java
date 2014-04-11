@@ -1,5 +1,7 @@
 package nihongo.chiisaidb.predicate;
 
+import nihongo.chiisaidb.storage.record.RecordFile;
+
 public class Predicate {
 	public static enum Link {
 		NONE, AND, OR;
@@ -19,6 +21,12 @@ public class Predicate {
 		this.term1 = term1;
 		this.term2 = term2;
 		this.link = link;
+	}
+
+	public boolean isSatisfied(RecordFile rec) throws Exception {
+		if (!term1.isSatisfied(rec) || !term2.isSatisfied(rec))
+			return false;
+		return true;
 	}
 
 }

@@ -11,7 +11,7 @@ import nihongo.chiisaidb.metadata.TableInfo;
 import nihongo.chiisaidb.storage.record.RecordFile;
 import nihongo.chiisaidb.type.Constant;
 
-public class TableScan {
+public class TableScan implements Scan {
 	private TableInfo ti;
 	private RecordFile rf;
 
@@ -49,10 +49,12 @@ public class TableScan {
 		return pkvs;
 	}
 
+	@Override
 	public Constant getValue(String fldName) throws Exception {
 		return rf.getVal(fldName);
 	}
 
+	@Override
 	public boolean next() throws Exception {
 		return rf.next();
 	}

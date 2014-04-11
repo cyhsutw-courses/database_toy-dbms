@@ -8,4 +8,6 @@ public abstract class Constant {
 
 	public abstract Object getValue();
 
+	public abstract int compareTo(Constant c);
+
 }
