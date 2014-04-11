@@ -28,6 +28,7 @@ public class InsertData {
 		return tblName + ".tbl";
 	}
 
+	
 	public List<Constant> values() {
 		return values;
 	}

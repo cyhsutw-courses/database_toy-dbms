@@ -59,7 +59,7 @@ public class Parser {
 		else if (lex.matchKeyword("create"))
 			return create();
 		else
-			throw new UnsupportedOperationException();
+			throw new UnsupportedOperationException(ErrorMessage.SYNTAX_ERROR);
 
 	}
 
@@ -94,7 +94,7 @@ public class Parser {
 		if (lex.matchKeyword("table"))
 			return createTable();
 		else
-			throw new UnsupportedOperationException();
+			throw new UnsupportedOperationException(ErrorMessage.SYNTAX_ERROR);
 	}
 
 	private CreateTableData createTable() {

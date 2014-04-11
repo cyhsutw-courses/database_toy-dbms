@@ -33,15 +33,17 @@ public class TableScan {
 	public Set<Object> getPrimaryKeyValueSet() throws Exception {
 		Set<Object> pkvs = new HashSet<Object>();
 		Set<Integer> pkfis = ti.schema().getPrimaryKeyFieldIndexes();
-
+		
+		
 		rf.beforeFirst();
 		
 		Constant val;
 		while(rf.next()){
-			for(String fldName : ti.schema().fieldNames()){
+			for(int i=0; i<ti.schema().fieldNames().size(); i++){
+				String fldName = ti.schema().fieldNames().get(i);
 				val = rf.getVal(fldName);
-				if(pkfis.contains(val)){
-					pkvs.add(val);
+				if(pkfis.contains(i)){
+					pkvs.add(val.getValue());
 				}
 			}
 		}

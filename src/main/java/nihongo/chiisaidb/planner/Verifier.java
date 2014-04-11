@@ -87,6 +87,8 @@ public class Verifier {
 		Iterator<String> iteratorFN = fieldNames.iterator();
 		Iterator<Constant> iteratorValue = values.iterator();
 
+		
+		
 		if (attriNames.size() != fieldNames.size())
 			throw new BadSemanticException(
 					ErrorMessage.WRONG_ATTRIBUTE_OR_ORDER);

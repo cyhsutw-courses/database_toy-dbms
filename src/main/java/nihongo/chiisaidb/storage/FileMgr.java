@@ -166,6 +166,7 @@ public class FileMgr {
 	}
 
 	private String readString(String tableFileName, int position) throws IOException {
+		
 		int length = readInteger(tableFileName);
 		ByteBuffer bb = readByteBuffer(tableFileName, position, length);
 		bb.position(position);
