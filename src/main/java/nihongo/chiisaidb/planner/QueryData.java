@@ -4,16 +4,16 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Set;
 
-import nihongo.chiisai.db.query.Predicate;
+import nihongo.chiisai.db.predicate.Predicate;
 
 public class QueryData {
 	// select
-	boolean isAllField;
-	List<String> fields;
+	private boolean isAllField;
+	private List<String> fields;
 	// from
-	Set<String> tables;
+	private Set<String> tables;
 	// where
-	Predicate pred;
+	private Predicate pred;
 
 	public QueryData(boolean isAllField, Predicate pred) {
 		if (!isAllField)
