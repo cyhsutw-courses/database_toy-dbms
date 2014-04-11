@@ -5,6 +5,8 @@ import java.util.List;
 
 import nihongo.chiisaidb.ErrorMessage;
 import nihongo.chiisaidb.metadata.Schema;
+import nihongo.chiisaidb.planner.data.CreateTableData;
+import nihongo.chiisaidb.planner.data.InsertData;
 import nihongo.chiisaidb.type.Constant;
 import nihongo.chiisaidb.type.IntegerConstant;
 import nihongo.chiisaidb.type.IntegerType;

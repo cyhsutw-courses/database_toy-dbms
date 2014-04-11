@@ -1,10 +1,10 @@
-package nihongo.chiisaidb.planner;
+package nihongo.chiisaidb.planner.data;
 
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Set;
 
-import nihongo.chiisai.db.predicate.Predicate;
+import nihongo.chiisaidb.predicate.Predicate;
 
 public class QueryData {
 	// select
@@ -33,5 +33,21 @@ public class QueryData {
 
 	public void addTable(String tblname) {
 		tables.add(tblname);
+	}
+
+	public boolean isAllField() {
+		return isAllField;
+	}
+
+	public List<String> fields() {
+		return fields;
+	}
+
+	public Set<String> tables() {
+		return tables;
+	}
+
+	public Predicate pred() {
+		return pred;
 	}
 }

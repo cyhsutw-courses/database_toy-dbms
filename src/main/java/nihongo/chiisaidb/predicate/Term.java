@@ -1,4 +1,4 @@
-package nihongo.chiisai.db.predicate;
+package nihongo.chiisaidb.predicate;
 
 public class Term {
 	public static enum Operator {

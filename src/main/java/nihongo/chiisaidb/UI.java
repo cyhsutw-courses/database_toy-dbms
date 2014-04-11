@@ -15,10 +15,10 @@ import nihongo.chiisaidb.type.VarcharType;
 
 public class UI {
 
-	public static void main(String[] args) throws Exception{
+	public static void main(String[] args) throws Exception {
 		UI ui = new UI();
 		Chiisai.init();
-		
+
 		System.out.println("Chiisaidb start ... by nihongo");
 		System.out.println("(input 'Quit' to terminate)\n");
 
@@ -89,6 +89,6 @@ public class UI {
 
 			Chiisai.planner().showAll();
 		} else
-			Chiisai.planner().executeUpdate(command);
+			Chiisai.planner().execute(command);
 	}
 }

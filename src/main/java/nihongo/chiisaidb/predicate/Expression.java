@@ -1,4 +1,4 @@
-package nihongo.chiisai.db.predicate;
+package nihongo.chiisaidb.predicate;
 
 import java.io.IOException;
 

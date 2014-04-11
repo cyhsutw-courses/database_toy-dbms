@@ -10,6 +10,9 @@ import nihongo.chiisaidb.Chiisai;
 import nihongo.chiisaidb.ErrorMessage;
 import nihongo.chiisaidb.metadata.Schema;
 import nihongo.chiisaidb.metadata.TableInfo;
+import nihongo.chiisaidb.planner.data.CreateTableData;
+import nihongo.chiisaidb.planner.data.InsertData;
+import nihongo.chiisaidb.planner.data.QueryData;
 import nihongo.chiisaidb.storage.TableScan;
 import nihongo.chiisaidb.type.Constant;
 import nihongo.chiisaidb.type.IntegerConstant;
@@ -29,7 +32,7 @@ public class Verifier {
 	private static TableScan tableScan;
 	private static String primaryKey;
 
-	public static void verifierCreateTableData(CreateTableData data) {
+	public static void verifyCreateTableData(CreateTableData data) {
 
 		// Check if table name is repeated
 		String tblName = data.tableName();
@@ -64,7 +67,7 @@ public class Verifier {
 
 	}
 
-	public static void verifierInsertData(InsertData data) throws Exception {
+	public static void verifyInsertData(InsertData data) throws Exception {
 		// Check if table exist? (equal to table name is repeated)
 		String tblName = data.tblName();
 		if (!Chiisai.mdMgr().hasTable(tblName))
@@ -87,8 +90,6 @@ public class Verifier {
 		Iterator<String> iteratorFN = fieldNames.iterator();
 		Iterator<Constant> iteratorValue = values.iterator();
 
-		
-		
 		if (attriNames.size() != fieldNames.size())
 			throw new BadSemanticException(
 					ErrorMessage.WRONG_ATTRIBUTE_OR_ORDER);
@@ -137,5 +138,9 @@ public class Verifier {
 
 		}
 
+	}
+
+	public static void verifyQueryData(QueryData data) {
+		// TODO
 	}
 }

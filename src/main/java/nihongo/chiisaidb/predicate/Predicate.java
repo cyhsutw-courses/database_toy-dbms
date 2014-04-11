@@ -1,4 +1,4 @@
-package nihongo.chiisai.db.predicate;
+package nihongo.chiisaidb.predicate;
 
 public class Predicate {
 	public static enum Link {

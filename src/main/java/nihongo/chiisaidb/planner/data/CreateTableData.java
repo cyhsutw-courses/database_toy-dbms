@@ -1,4 +1,4 @@
-package nihongo.chiisaidb.planner;
+package nihongo.chiisaidb.planner.data;
 
 import nihongo.chiisaidb.metadata.Schema;
 
