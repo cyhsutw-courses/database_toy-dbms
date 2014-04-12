@@ -2,7 +2,6 @@ package nihongo.chiisaidb.planner.data;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Set;
 
 import nihongo.chiisaidb.predicate.Predicate;
 
@@ -11,16 +10,13 @@ public class QueryData {
 	private boolean isAllField;
 	private List<String> fields;
 	// from
-	private Set<String> tables;
+	private String table1;
+	private String table2;
 	// where
 	private Predicate pred;
 
 	public QueryData(boolean isAllField, Predicate pred) {
-		if (!isAllField)
-			fields = new ArrayList<String>();
-		else
-			fields = null;
-
+		fields = new ArrayList<String>();
 		this.pred = pred;
 	}
 
@@ -31,8 +27,18 @@ public class QueryData {
 		fields.add(fname);
 	}
 
-	public void addTable(String tblname) {
-		tables.add(tblname);
+	public void addField(List<String> fnames) {
+		fields.addAll(fnames);
+	}
+
+	public void setTable(String tblName) {
+		this.table1 = tblName;
+		this.table2 = "";
+	}
+
+	public void setTable(String tblName1, String tblName2) {
+		this.table1 = tblName1;
+		this.table2 = tblName2;
 	}
 
 	public boolean isAllField() {
@@ -43,11 +49,16 @@ public class QueryData {
 		return fields;
 	}
 
-	public Set<String> tables() {
-		return tables;
+	public String getTable1() {
+		return table1;
+	}
+
+	public String getTable2() {
+		return table2;
 	}
 
 	public Predicate pred() {
 		return pred;
 	}
+
 }

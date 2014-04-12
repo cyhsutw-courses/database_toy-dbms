@@ -37,8 +37,7 @@ public class Planner {
 			uplanner.executeInsert(data);
 		} else if (ob instanceof QueryData) {
 			Verifier.verifyQueryData((QueryData) ob);
-			QueryResult qr = qplanner.executeQuery((QueryData) ob);
-			// TODO
+			qplanner.executeQuery((QueryData) ob);
 		} else
 			throw new UnsupportedOperationException();
 	}

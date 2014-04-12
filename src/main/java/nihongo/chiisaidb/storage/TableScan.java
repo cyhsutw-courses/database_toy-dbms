@@ -8,7 +8,7 @@ import java.util.Set;
 
 import nihongo.chiisaidb.Chiisai;
 import nihongo.chiisaidb.metadata.TableInfo;
-import nihongo.chiisaidb.query.Scan;
+import nihongo.chiisaidb.planner.query.Scan;
 import nihongo.chiisaidb.storage.record.RecordFile;
 import nihongo.chiisaidb.type.Constant;
 
