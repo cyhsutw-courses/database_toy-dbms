@@ -8,6 +8,7 @@ import java.util.Set;
 
 import nihongo.chiisaidb.Chiisai;
 import nihongo.chiisaidb.metadata.TableInfo;
+import nihongo.chiisaidb.query.Scan;
 import nihongo.chiisaidb.storage.record.RecordFile;
 import nihongo.chiisaidb.type.Constant;
 
@@ -50,13 +51,23 @@ public class TableScan implements Scan {
 	}
 
 	@Override
-	public Constant getValue(String fldName) throws Exception {
-		return rf.getVal(fldName);
+	public void beforeFirst() throws Exception {
+		rf.beforeFirst();
 	}
 
 	@Override
 	public boolean next() throws Exception {
 		return rf.next();
+	}
+
+	@Override
+	public Constant getVal(String fldName) throws Exception {
+		return rf.getVal(fldName);
+	}
+
+	@Override
+	public boolean hasField(String fldName) throws Exception {
+		return ti.schema().hasField(fldName);
 	}
 
 	public void showAllRecord() throws Exception {

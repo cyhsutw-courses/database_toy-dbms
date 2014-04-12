@@ -60,6 +60,10 @@ public class Schema {
 		return pkfis;
 	}
 
+	public boolean hasField(String fldName) {
+		return fieldNames.contains(fldName);
+	}
+
 	public String format() {
 		StringBuffer strbuffer = new StringBuffer();
 		for (int i = 0; i < fieldNames.size(); i++) {

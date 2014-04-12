@@ -1,6 +1,6 @@
 package nihongo.chiisaidb.predicate;
 
-import nihongo.chiisaidb.storage.record.RecordFile;
+import nihongo.chiisaidb.storage.record.Record;
 import nihongo.chiisaidb.type.Constant;
 import nihongo.chiisaidb.type.IntegerConstant;
 
@@ -63,7 +63,7 @@ public class ConstantExpression implements Expression {
 	 * @see Expression#evaluate(Record)
 	 */
 	@Override
-	public Constant evaluate(RecordFile rec) {
+	public Constant evaluate(Record rec) {
 		return val;
 	}
 

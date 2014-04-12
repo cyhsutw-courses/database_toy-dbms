@@ -2,7 +2,7 @@ package nihongo.chiisaidb.predicate;
 
 import java.io.IOException;
 
-import nihongo.chiisaidb.storage.record.RecordFile;
+import nihongo.chiisaidb.storage.record.Record;
 import nihongo.chiisaidb.type.Constant;
 
 public interface Expression {
@@ -44,6 +44,6 @@ public interface Expression {
 	 * @return the value of the expression, as a constant
 	 * @throws IOException
 	 */
-	Constant evaluate(RecordFile rec) throws Exception;
+	Constant evaluate(Record rec) throws Exception;
 
 }

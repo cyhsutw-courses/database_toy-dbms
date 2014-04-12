@@ -1,13 +1,13 @@
 package nihongo.chiisaidb.predicate;
 
-import nihongo.chiisaidb.storage.record.RecordFile;
+import nihongo.chiisaidb.storage.record.Record;
 
 public class Term {
 	public abstract static class Operator {
 		abstract Operator complement();
 
-		abstract boolean isSatisfied(Expression lhs, Expression rhs,
-				RecordFile rec) throws Exception;
+		abstract boolean isSatisfied(Expression lhs, Expression rhs, Record rec)
+				throws Exception;
 	}
 
 	public static final Operator OP_EQ = new Operator() {
@@ -17,7 +17,7 @@ public class Term {
 		}
 
 		@Override
-		boolean isSatisfied(Expression lhs, Expression rhs, RecordFile rec)
+		boolean isSatisfied(Expression lhs, Expression rhs, Record rec)
 				throws Exception {
 			return lhs.evaluate(rec).equals(rhs.evaluate(rec));
 		}
@@ -35,7 +35,7 @@ public class Term {
 		}
 
 		@Override
-		boolean isSatisfied(Expression lhs, Expression rhs, RecordFile rec)
+		boolean isSatisfied(Expression lhs, Expression rhs, Record rec)
 				throws Exception {
 			return !(lhs.evaluate(rec).equals(rhs.evaluate(rec)));
 		}
@@ -53,7 +53,7 @@ public class Term {
 		}
 
 		@Override
-		boolean isSatisfied(Expression lhs, Expression rhs, RecordFile rec)
+		boolean isSatisfied(Expression lhs, Expression rhs, Record rec)
 				throws Exception {
 			return lhs.evaluate(rec).compareTo(rhs.evaluate(rec)) < 0;
 		}
@@ -71,7 +71,7 @@ public class Term {
 		}
 
 		@Override
-		boolean isSatisfied(Expression lhs, Expression rhs, RecordFile rec)
+		boolean isSatisfied(Expression lhs, Expression rhs, Record rec)
 				throws Exception {
 			return complement().isSatisfied(rhs, lhs, rec);
 		}
@@ -92,7 +92,7 @@ public class Term {
 		this.op = op;
 	}
 
-	public boolean isSatisfied(RecordFile rec) throws Exception {
+	public boolean isSatisfied(Record rec) throws Exception {
 		return op.isSatisfied(lhs, rhs, rec);
 	}
 }

@@ -1,6 +1,6 @@
 package nihongo.chiisaidb.predicate;
 
-import nihongo.chiisaidb.storage.record.RecordFile;
+import nihongo.chiisaidb.storage.record.Record;
 
 public class Predicate {
 	public static enum Link {
@@ -23,7 +23,7 @@ public class Predicate {
 		this.link = link;
 	}
 
-	public boolean isSatisfied(RecordFile rec) throws Exception {
+	public boolean isSatisfied(Record rec) throws Exception {
 		if (!term1.isSatisfied(rec) || !term2.isSatisfied(rec))
 			return false;
 		return true;

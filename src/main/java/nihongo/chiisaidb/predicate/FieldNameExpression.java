@@ -1,8 +1,6 @@
 package nihongo.chiisaidb.predicate;
 
-import java.io.IOException;
-
-import nihongo.chiisaidb.storage.record.RecordFile;
+import nihongo.chiisaidb.storage.record.Record;
 import nihongo.chiisaidb.type.Constant;
 
 public class FieldNameExpression implements Expression {
@@ -61,12 +59,12 @@ public class FieldNameExpression implements Expression {
 	/**
 	 * Evaluates the field by getting its value from the record.
 	 * 
-	 * @throws IOException
+	 * @throws Exception
 	 * 
 	 * @see Expression#evaluate(Record)
 	 */
 	@Override
-	public Constant evaluate(RecordFile rec) throws IOException {
+	public Constant evaluate(Record rec) throws Exception {
 		return rec.getVal(fldName);
 	}
 
