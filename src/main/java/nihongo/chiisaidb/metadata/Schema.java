@@ -64,6 +64,22 @@ public class Schema {
 		return fieldNames.contains(fldName);
 	}
 
+	public List<Integer> getDisplaySize() {
+		List<Integer> l = new ArrayList<Integer>();
+		for (int i = 0; i < fieldNames.size(); i++) {
+			l.add(getDisplaySize(fieldNames.get(i)));
+		}
+		return l;
+	}
+
+	public int getDisplaySize(String fldName) {
+		int typesize = fields.get(fldName).getDisplaySize();
+		int fieldNameLength = fldName.length();
+		System.out.println("typesize/fieldName =" + typesize + "/"
+				+ fieldNameLength);
+		return (typesize > fieldNameLength ? typesize : fieldNameLength);
+	}
+
 	public String format() {
 		StringBuffer strbuffer = new StringBuffer();
 		for (int i = 0; i < fieldNames.size(); i++) {

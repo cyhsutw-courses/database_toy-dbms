@@ -16,6 +16,7 @@ public class QueryData {
 	private Predicate pred;
 
 	public QueryData(boolean isAllField, Predicate pred) {
+		this.isAllField = isAllField;
 		fields = new ArrayList<String>();
 		this.pred = pred;
 	}

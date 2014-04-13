@@ -6,6 +6,11 @@ import java.util.ArrayList;
 import java.util.List;
 
 import nihongo.chiisaidb.metadata.Schema;
+import nihongo.chiisaidb.planner.data.QueryData;
+import nihongo.chiisaidb.predicate.ConstantExpression;
+import nihongo.chiisaidb.predicate.FieldNameExpression;
+import nihongo.chiisaidb.predicate.Predicate;
+import nihongo.chiisaidb.predicate.Term;
 import nihongo.chiisaidb.storage.TableScan;
 import nihongo.chiisaidb.type.Constant;
 import nihongo.chiisaidb.type.IntegerConstant;
@@ -67,14 +72,14 @@ public class UI {
 		else if (command.compareToIgnoreCase("Createtable") == 0) {
 			String testTblName = "Student";
 			Schema sch = new Schema();
-			sch.addField("ID", IntegerType.INTEGERTYPE);
-			sch.addField("Name", VarcharType.VARCHARTYPE);
-			sch.addField("People Type", VarcharType.VARCHARTYPE);
+			sch.addField("ID", new IntegerType());
+			sch.addField("Name", new VarcharType(7));
+			sch.addField("People Type", new VarcharType(5));
 			Chiisai.mdMgr().createTable(testTblName, sch);
 
 			Chiisai.mdMgr().showMetadata();
 		} else if (command.compareToIgnoreCase("Insert") == 0) {
-			String testFileName = "Student.tbl";
+			String testFileName = "Student";
 			TableScan ts = new TableScan(testFileName);
 			List<Constant> vals = new ArrayList<Constant>();
 			vals.add(new IntegerConstant(9962231));
@@ -88,6 +93,26 @@ public class UI {
 			ts.insert(vals);
 
 			Chiisai.planner().showAll();
+		} else if (command.compareToIgnoreCase("select1") == 0) {
+			System.out.println("select name from student");
+			QueryData data = new QueryData(false, null);
+			data.setTable("Student");
+			data.addField("Name");
+			Chiisai.planner().testQuery(data);
+		} else if (command.compareToIgnoreCase("select2") == 0) {
+			System.out.println("select name from student where id = 9962231");
+			Term t = new Term(new FieldNameExpression("ID"),
+					new ConstantExpression(new IntegerConstant(9962231)),
+					Term.OP_EQ);
+			QueryData data = new QueryData(false, new Predicate(t));
+			data.setTable("Student");
+			data.addField("Name");
+			Chiisai.planner().testQuery(data);
+		} else if (command.compareToIgnoreCase("select3") == 0) {
+			System.out.println("select * from student");
+			QueryData data = new QueryData(true, null);
+			data.setTable("Student");
+			Chiisai.planner().testQuery(data);
 		} else
 			Chiisai.planner().execute(command);
 	}

@@ -42,6 +42,10 @@ public class Planner {
 			throw new UnsupportedOperationException();
 	}
 
+	public void testQuery(QueryData data) throws Exception {
+		qplanner.executeQuery(data);
+	}
+
 	public void showAll() throws Exception {
 		uplanner.showAll();
 	}

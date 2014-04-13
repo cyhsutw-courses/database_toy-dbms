@@ -1,7 +1,8 @@
 package nihongo.chiisaidb.type;
 
-public class VarcharType extends FieldType {
+public class VarcharType extends Type {
 	public static final VarcharType VARCHARTYPE = new VarcharType(0);
+
 	private int maxlength;
 
 	public VarcharType(int maxlength) {
@@ -15,6 +16,11 @@ public class VarcharType extends FieldType {
 	@Override
 	public String toString() {
 		return "Varchar";
+	}
+
+	@Override
+	public int getDisplaySize() {
+		return maxlength;
 	}
 
 }
