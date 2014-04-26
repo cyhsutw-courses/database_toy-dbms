@@ -87,7 +87,7 @@ public class QueryPlanner {
 		int i = 0;
 		while (s.next()) {
 			i++;
-			// System.out.println("record:" + i);
+			System.out.println("record:" + i);
 		}
 
 	}

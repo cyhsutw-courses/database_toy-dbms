@@ -60,6 +60,8 @@ public class Parser {
 			return insert();
 		else if (lex.matchKeyword("create"))
 			return create();
+		// else if(lex.matchKeyword("select"))
+		// return select();
 		else
 			throw new UnsupportedOperationException(ErrorMessage.SYNTAX_ERROR);
 
@@ -107,6 +109,16 @@ public class Parser {
 		lex.eatDelim(')');
 		return new CreateTableData(tblname, sch);
 	}
+
+	// private Object selectData() {
+	// List<String> flds;
+	// lex.eatKeyword("select");
+	// flds = idList();
+	// if (lex.matchKeyword("from")) {
+	// lex.eatKeyword("from");
+	//
+	// }
+	// }
 
 	private Schema fieldDefs() {
 		Schema schema = fieldDef();
