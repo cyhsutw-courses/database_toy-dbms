@@ -75,20 +75,24 @@ public class QueryPlanner {
 			s = new ProjectScan(s, data.fields());
 
 		// Show Result
-		// showQueryResult(s, data.fields(), displaysize);
-		for (int i = 0; i < data.fields().size(); i++)
-			System.out.print(data.fields().get(i) + "(" + displaysize.get(i)
-					+ ") ");
+		showQueryResult(s, data.fields(), displaysize);
 
-		if (s instanceof TableScan)
-			System.out.println("I'm TableScan.");
-
-		s.beforeFirst();
-		int i = 0;
-		while (s.next()) {
-			i++;
-			System.out.println("record:" + i);
-		}
+		// for (int i = 0; i < data.fields().size(); i++)
+		// System.out.print(data.fields().get(i) + "(" + displaysize.get(i)
+		// + ") ");
+		//
+		// if (s instanceof TableScan)
+		// System.out.println("I'm TableScan.");
+		//
+		// s.beforeFirst();
+		// int size = data.fields().size();
+		// int i = 0;
+		// while (s.next()) {
+		// System.out.println(i + ":" +
+		// s.getVal(data.fields().get(i)).getValue());
+		// i++;
+		// i = i % size;
+		// }
 
 	}
 
@@ -99,6 +103,7 @@ public class QueryPlanner {
 			System.out.format(fmt, fields.get(i));
 		}
 		System.out.println();
+		s.beforeFirst();
 		while (s.next()) {
 			for (int i = 0; i < fields.size(); i++) {
 				String fmt = "%" + (displaysize.get(i) + 2) + "s";
