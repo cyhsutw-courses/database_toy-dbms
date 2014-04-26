@@ -15,6 +15,10 @@ public class QueryData {
 	// where
 	private Predicate pred;
 
+	public QueryData() {
+		fields = new ArrayList<String>();
+	}
+
 	public QueryData(boolean isAllField, Predicate pred) {
 		this.isAllField = isAllField;
 		fields = new ArrayList<String>();
@@ -60,6 +64,14 @@ public class QueryData {
 
 	public Predicate pred() {
 		return pred;
+	}
+
+	public void setPredicate(Predicate pred) {
+		this.pred = pred;
+	}
+
+	public void setIsAllField(boolean isAllField) {
+		this.isAllField = isAllField;
 	}
 
 }
