@@ -1,7 +1,5 @@
 package nihongo.chiisaidb.planner;
 
-import java.io.IOException;
-
 import nihongo.chiisaidb.Chiisai;
 import nihongo.chiisaidb.planner.data.CreateTableData;
 import nihongo.chiisaidb.planner.data.InsertData;

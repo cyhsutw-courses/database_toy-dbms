@@ -75,8 +75,8 @@ public class Schema {
 	public int getDisplaySize(String fldName) {
 		int typesize = fields.get(fldName).getDisplaySize();
 		int fieldNameLength = fldName.length();
-		System.out.println("typesize/fieldName =" + typesize + "/"
-				+ fieldNameLength);
+		// System.out.println("typesize/fieldName =" + typesize + "/"
+		// + fieldNameLength);
 		return (typesize > fieldNameLength ? typesize : fieldNameLength);
 	}
 

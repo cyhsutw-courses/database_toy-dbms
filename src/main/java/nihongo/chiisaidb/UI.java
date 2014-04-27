@@ -18,24 +18,19 @@ import nihongo.chiisaidb.type.IntegerType;
 import nihongo.chiisaidb.type.VarcharConstant;
 import nihongo.chiisaidb.type.VarcharType;
 
-import nihongo.chiisaidb.util.*;
-
 public class UI {
 
 	public static void main(String[] args) throws Exception {
-		
+
 		/*
 		 * Added to show how to parse SQLs from a file
-		 * 
-		 * */
+		 */
 		/*
-		SQLSpliter spliter = new SQLSpliter();
-		List<String> sqls = spliter.splitSQLfromFile("SQL_FILE.sql");
-		for(String sql : sqls){
-			System.out.println(sql);
-		}
-		*/
-		
+		 * SQLSpliter spliter = new SQLSpliter(); List<String> sqls =
+		 * spliter.splitSQLfromFile("SQL_FILE.sql"); for(String sql : sqls){
+		 * System.out.println(sql); }
+		 */
+
 		UI ui = new UI();
 		Chiisai.init();
 
@@ -84,16 +79,22 @@ public class UI {
 			Chiisai.mdMgr().showMetadata();
 		else if (command.compareToIgnoreCase("Showall") == 0)
 			Chiisai.planner().showAll();
-		else if (command.compareToIgnoreCase("Createtable") == 0) {
+		else if (command.compareToIgnoreCase("createtable") == 0) {
 			String testTblName = "Student";
 			Schema sch = new Schema();
 			sch.addField("ID", new IntegerType());
 			sch.addField("Name", new VarcharType(7));
-			sch.addField("People Type", new VarcharType(5));
+			sch.addField("PeopleType", new VarcharType(5));
 			Chiisai.mdMgr().createTable(testTblName, sch);
 
+			String testTblName2 = "Enroll";
+			Schema sch2 = new Schema();
+			sch2.addField("ClassName", new VarcharType(20));
+			sch2.addField("StudentId", new IntegerType());
+			Chiisai.mdMgr().createTable(testTblName2, sch2);
+
 			Chiisai.mdMgr().showMetadata();
-		} else if (command.compareToIgnoreCase("Insert") == 0) {
+		} else if (command.compareToIgnoreCase("insert") == 0) {
 			String testFileName = "Student";
 			TableScan ts = new TableScan(testFileName);
 			List<Constant> vals = new ArrayList<Constant>();
@@ -101,13 +102,30 @@ public class UI {
 			vals.add(new VarcharConstant("Mr Chen"));
 			vals.add(new VarcharConstant("OAQ"));
 			ts.insert(vals);
-			
+
 			vals = new ArrayList<Constant>();
 			vals.add(new IntegerConstant(9962210));
 			vals.add(new VarcharConstant("CY Hsu"));
 			vals.add(new VarcharConstant("O O"));
 			ts.insert(vals);
-			
+
+			String testFileName2 = "Enroll";
+			ts = new TableScan(testFileName2);
+			vals = new ArrayList<Constant>();
+			vals.add(new VarcharConstant("DB"));
+			vals.add(new IntegerConstant(9962231));
+			ts.insert(vals);
+
+			vals = new ArrayList<Constant>();
+			vals.add(new VarcharConstant("ML"));
+			vals.add(new IntegerConstant(9962231));
+			ts.insert(vals);
+
+			vals = new ArrayList<Constant>();
+			vals.add(new VarcharConstant("DB"));
+			vals.add(new IntegerConstant(9962210));
+			ts.insert(vals);
+
 			Chiisai.planner().showAll();
 		} else if (command.compareToIgnoreCase("select1") == 0) {
 			System.out.println("select name from student");
@@ -128,6 +146,43 @@ public class UI {
 			System.out.println("select * from student");
 			QueryData data = new QueryData(true, null);
 			data.setTable("Student");
+			Chiisai.planner().testQuery(data);
+
+		} else if (command.compareToIgnoreCase("select4") == 0) {
+			System.out.println("select * from student where id = 9962231");
+			Term t = new Term(new FieldNameExpression("ID"),
+					new ConstantExpression(new IntegerConstant(9962231)),
+					Term.OP_EQ);
+			QueryData data = new QueryData(true, new Predicate(t));
+			data.setTable("Student");
+			Chiisai.planner().testQuery(data);
+		} else if (command.compareToIgnoreCase("select5") == 0) {
+			System.out.println("select * from student, enroll");
+			QueryData data = new QueryData(true, null);
+			data.setTable("Student", "Enroll");
+			Chiisai.planner().testQuery(data);
+		} else if (command.compareToIgnoreCase("select6") == 0) {
+			System.out.println("select name from student, enroll");
+			QueryData data = new QueryData(false, null);
+			data.setTable("Student", "Enroll");
+			data.addField("Name");
+			Chiisai.planner().testQuery(data);
+		} else if (command.compareToIgnoreCase("select7") == 0) {
+			System.out
+					.println("select * from student, enroll where id = 9962231");
+			Term t = new Term(new FieldNameExpression("ID"),
+					new ConstantExpression(new IntegerConstant(9962231)),
+					Term.OP_EQ);
+			QueryData data = new QueryData(true, new Predicate(t));
+			data.setTable("Student", "Enroll");
+			Chiisai.planner().testQuery(data);
+		} else if (command.compareToIgnoreCase("select8") == 0) {
+			System.out
+					.println("select * from student, enroll where id = studentid");
+			Term t = new Term(new FieldNameExpression("ID"),
+					new FieldNameExpression("StudentId"), Term.OP_EQ);
+			QueryData data = new QueryData(true, new Predicate(t));
+			data.setTable("Student", "Enroll");
 			Chiisai.planner().testQuery(data);
 		} else
 			Chiisai.planner().execute(command);

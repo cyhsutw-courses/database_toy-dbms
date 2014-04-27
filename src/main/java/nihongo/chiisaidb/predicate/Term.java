@@ -95,4 +95,9 @@ public class Term {
 	public boolean isSatisfied(Record rec) throws Exception {
 		return op.isSatisfied(lhs, rhs, rec);
 	}
+
+	@Override
+	public String toString() {
+		return lhs.toString() + " " + op + " " + rhs.toString();
+	}
 }

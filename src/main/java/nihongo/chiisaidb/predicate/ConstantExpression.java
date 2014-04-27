@@ -74,9 +74,9 @@ public class ConstantExpression implements Expression {
 	@Override
 	public String toString() {
 		if (val instanceof IntegerConstant)
-			return val.toString();
+			return val.getValue().toString();
 		else
-			return "'" + val.toString() + "'";
+			return "'" + val.getValue().toString() + "'";
 
 	}
 }

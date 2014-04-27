@@ -24,9 +24,19 @@ public class Predicate {
 	}
 
 	public boolean isSatisfied(Record rec) throws Exception {
-		if (!term1.isSatisfied(rec) || !term2.isSatisfied(rec))
-			return false;
-		return true;
+		if (link == Link.NONE)
+			return term1.isSatisfied(rec);
+		else if (link == Link.AND)
+			return term1.isSatisfied(rec) && term2.isSatisfied(rec);
+		else if (link == Link.OR)
+			return term1.isSatisfied(rec) || term2.isSatisfied(rec);
+		else
+			throw new UnsupportedOperationException();
+	}
+
+	@Override
+	public String toString() {
+		return term1 + " " + link + " " + term2;
 	}
 
 }

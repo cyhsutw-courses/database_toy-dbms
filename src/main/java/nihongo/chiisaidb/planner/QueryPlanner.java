@@ -20,7 +20,7 @@ public class QueryPlanner {
 	}
 
 	public void executeQuery(QueryData data) throws Exception {
-		System.out.println("***isAllField = " + data.isAllField());
+		// System.out.println("***isAllField = " + data.isAllField());
 		List<Integer> displaysize = new ArrayList<Integer>();
 		boolean isOnlyOneTable = data.getTable2().isEmpty();
 
@@ -43,7 +43,7 @@ public class QueryPlanner {
 			if (isOnlyOneTable)
 				for (int i = 0; i < data.fields().size(); i++) {
 					int size = sch.getDisplaySize(data.fields().get(i));
-					System.out.print(size + ", ");
+					// System.out.print(size + ", ");
 					displaysize.add(size);
 				}
 			else {
@@ -59,8 +59,6 @@ public class QueryPlanner {
 			}
 		}
 
-		System.out.println("***start to scan");
-
 		Scan s = new TableScan(data.getTable1());
 		// Product
 		if (!isOnlyOneTable)
@@ -74,25 +72,19 @@ public class QueryPlanner {
 		if (!data.isAllField())
 			s = new ProjectScan(s, data.fields());
 
+		if (s instanceof TableScan)
+			System.out.println("I'm TableScan~");
+		else if (s instanceof ProductScan)
+			System.out.println("I'm ProductScan~");
+		else if (s instanceof SelectScan)
+			System.out.println("I'm SelectScan~");
+		else if (s instanceof ProjectScan)
+			System.out.println("I'm ProjectScan~");
+		else
+			System.out.println("Who am I?");
+
 		// Show Result
 		showQueryResult(s, data.fields(), displaysize);
-
-		// for (int i = 0; i < data.fields().size(); i++)
-		// System.out.print(data.fields().get(i) + "(" + displaysize.get(i)
-		// + ") ");
-		//
-		// if (s instanceof TableScan)
-		// System.out.println("I'm TableScan.");
-		//
-		// s.beforeFirst();
-		// int size = data.fields().size();
-		// int i = 0;
-		// while (s.next()) {
-		// System.out.println(i + ":" +
-		// s.getVal(data.fields().get(i)).getValue());
-		// i++;
-		// i = i % size;
-		// }
 
 	}
 

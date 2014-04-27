@@ -36,9 +36,15 @@ public class SelectScan implements Scan {
 	 */
 	@Override
 	public boolean next() throws Exception {
-		while (s.next())
-			if (pred.isSatisfied(s))
+		// for test
+		// System.out.println("SelectScan - next()");
+		while (s.next()) {
+			// System.out.println("Pred: " + pred.toString());
+			boolean flag = pred.isSatisfied(s);
+			// System.out.println("isStaisfied:" + flag);
+			if (flag)
 				return true;
+		}
 		return false;
 	}
 
