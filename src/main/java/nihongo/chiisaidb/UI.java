@@ -28,12 +28,13 @@ public class UI {
 		 * Added to show how to parse SQLs from a file
 		 * 
 		 * */
+		/*
 		SQLSpliter spliter = new SQLSpliter();
 		List<String> sqls = spliter.splitSQLfromFile("SQL_FILE.sql");
 		for(String sql : sqls){
 			System.out.println(sql);
 		}
-		
+		*/
 		
 		UI ui = new UI();
 		Chiisai.init();
@@ -100,12 +101,13 @@ public class UI {
 			vals.add(new VarcharConstant("Mr Chen"));
 			vals.add(new VarcharConstant("OAQ"));
 			ts.insert(vals);
+			
 			vals = new ArrayList<Constant>();
 			vals.add(new IntegerConstant(9962210));
 			vals.add(new VarcharConstant("CY Hsu"));
 			vals.add(new VarcharConstant("O O"));
 			ts.insert(vals);
-
+			
 			Chiisai.planner().showAll();
 		} else if (command.compareToIgnoreCase("select1") == 0) {
 			System.out.println("select name from student");

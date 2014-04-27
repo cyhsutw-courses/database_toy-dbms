@@ -13,10 +13,12 @@ public class RecordFile implements Record {
 	private TableInfo ti;
 	private String fileName;
 	private FileMgr fileMgr = Chiisai.fMgr();
-
+	private int recordId;
+	
 	public RecordFile(TableInfo ti) {
 		this.ti = ti;
 		this.fileName = ti.fileName();
+		this.recordId = 0;
 	}
 
 	public RecordFile(String fileName) {
@@ -24,12 +26,22 @@ public class RecordFile implements Record {
 		this.fileName = fileName;
 	}
 
+	public void moveFilePointerToLast() throws IOException{
+		System.out.println("s--"+(numberOfRecords()*ti.recordSize()+4));
+		this.recordId = numberOfRecords();
+		fileMgr.moveFilePointer(fileName, (this.recordId)*ti.recordSize()+4);
+	}
+	
 	public void beforeFirst() throws Exception {
+		this.recordId = -1;
 		fileMgr.beforeFirst(fileName);
 	}
 
 	public boolean next() throws Exception {
-		return Chiisai.fMgr().next(ti.fileName());
+		this.recordId++;
+		fileMgr.moveFilePointer(fileName, recordId*ti.recordSize()+4);
+		boolean hasNext = fileMgr.next(ti.fileName());
+		return hasNext;
 	}
 
 	public int numberOfRecords() {
@@ -49,22 +61,24 @@ public class RecordFile implements Record {
 		}
 	}
 
-	public Constant getVal(int fldType) throws IOException {
-		return fileMgr.getVal(fileName, fldType);
-	}
-
 	@Override
 	public Constant getVal(String fldName) throws IOException {
-		return fileMgr.getVal(this.fileName,
-				Type.typeInt(ti.schema().fields().get(fldName)));
+		int offset = this.ti.offset(fldName);
+		offset += (this.recordId*ti.recordSize())+4; 
+		return fileMgr.getVal(this.fileName, offset, Type.typeInt(ti.schema().fields().get(fldName)));
 
-	}
-
-	public void setVal(Constant newVal) throws IOException {
-		fileMgr.setVal(fileName, newVal);
 	}
 
 	public void setVal(String fldName, Constant newVal) throws IOException {
-		fileMgr.setVal(this.fileName, newVal);
+		int offset = this.ti.offset(fldName);
+		offset += (this.recordId*ti.recordSize())+4;
+		fileMgr.setVal(fileName, offset, newVal);
+	}
+	
+	public Constant getVal(int fldType) throws IOException {
+		return fileMgr.getVal(fileName, fldType);
+	}
+	public void setVal(Constant newVal) throws IOException {
+		fileMgr.setVal(fileName, newVal);
 	}
 }

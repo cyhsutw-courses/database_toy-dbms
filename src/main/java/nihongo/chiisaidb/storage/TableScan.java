@@ -21,8 +21,10 @@ public class TableScan implements Scan {
 		this.rf = new RecordFile(this.ti);
 	}
 
-	public void insert(List<Constant> values) throws IOException {
-
+	public void insert(List<Constant> values) throws Exception {
+		
+		rf.moveFilePointerToLast();
+		
 		int fieldNum = values.size();
 		for (int i = 0; i < fieldNum; i++) {
 			rf.setVal(ti.schema().fieldNames().get(i), values.get(i));

@@ -23,4 +23,8 @@ public class VarcharType extends Type {
 		return maxlength;
 	}
 
+	@Override
+	public int numberOfBytes() {
+		return maxlength+4;
+	}
 }

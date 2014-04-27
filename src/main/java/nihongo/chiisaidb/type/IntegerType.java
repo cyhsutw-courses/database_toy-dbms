@@ -17,4 +17,9 @@ public class IntegerType extends Type {
 	public int getDisplaySize() {
 		return INTEGER_DISPLAY_SIZE;
 	}
+	
+	@Override
+	public int numberOfBytes() {
+		return 4;
+	}
 }

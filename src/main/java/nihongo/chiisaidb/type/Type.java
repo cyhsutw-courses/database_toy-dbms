@@ -34,5 +34,7 @@ public abstract class Type {
 
 	public abstract int getDisplaySize();
 
+	public abstract int numberOfBytes();
+	
 	public abstract String toString();
 }

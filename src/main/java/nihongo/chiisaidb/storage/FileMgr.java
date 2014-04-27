@@ -41,7 +41,7 @@ public class FileMgr {
 			throw new IOException(fileName + " already exitsts!");
 		} else {
 			dbTable.createNewFile();
-			appendInteger(fileName, 0);
+			writeInteger(fileName, 0, 0);
 		}
 	}
 
@@ -52,33 +52,65 @@ public class FileMgr {
 
 	public boolean next(String fileName) throws Exception {
 		FileChannel fc = getFile(fileName);
+		
 		if (fc.size() == 0)
 			return false;
-		else if (fc.position() - fc.size() == 0)
+		else if (fc.position() - fc.size() >= 0)
 			return false;
 		else
 			return true;
 	}
 
-	public Constant getVal(String fileName, int fldType) throws IOException {
+	public void moveFilePointer(String fileName, int offset) throws IOException{
+		FileChannel fc = getFile(fileName);
+		fc.position(offset);
+	}
+	
+	public Constant getVal(String fileName, int position, int fldType) throws IOException {
 		if (fldType == Types.INTEGER) {
-			return new IntegerConstant(readInteger(fileName));
+			return new IntegerConstant(readInteger(fileName, position));
 		} else if (fldType == Types.VARCHAR) {
-			return new VarcharConstant(readString(fileName));
+			return new VarcharConstant(readString(fileName, position));
 		} else {
 			throw new UnsupportedOperationException();
 		}
 	}
 
-	public void setVal(String fileName, Constant newVal) throws IOException {
+	public void setVal(String fileName, int position, Constant newVal) throws IOException {
+		
 		if (newVal instanceof VarcharConstant) {
-			appendString(fileName, (String) newVal.getValue());
+			writeString(fileName, position, (String) newVal.getValue());
+			
 		} else if (newVal instanceof IntegerConstant) {
-			appendInteger(fileName, (Integer) newVal.getValue());
+			
+			writeInteger(fileName, position, (Integer) newVal.getValue());
 		} else {
 			throw new UnsupportedOperationException();
 		}
 	}
+	
+	public Constant getVal(String fileName, int fldType) throws IOException{
+		if (fldType == Types.INTEGER) {
+			return new IntegerConstant(readInteger(fileName, -1));
+		} else if (fldType == Types.VARCHAR) {
+			return new VarcharConstant(readString(fileName, -1));
+		} else {
+			throw new UnsupportedOperationException();
+		}
+	}
+	
+	public void setVal(String fileName, Constant newVal) throws IOException{
+		if (newVal instanceof VarcharConstant) {
+			writeString(fileName, -1, (String) newVal.getValue());
+			
+		} else if (newVal instanceof IntegerConstant) {
+			
+			writeInteger(fileName, -1, (Integer) newVal.getValue());
+		} else {
+			throw new UnsupportedOperationException();
+		}
+	}
+	
 
 	public int numberOfRecords(String fileName) throws IOException {
 		FileChannel fc = getFile(fileName);
@@ -93,7 +125,7 @@ public class FileMgr {
 		FileChannel fc = getFile(fileName);
 		long currentPos = fc.position();
 		int records = readInteger(fileName, 0);
-		writeInteger(fileName, records + amount, 0);
+		writeInteger(fileName, 0, records + amount);
 		fc.position(currentPos);
 
 	}
@@ -123,17 +155,16 @@ public class FileMgr {
 	 *****/
 	private ByteBuffer readByteBuffer(String tableFileName, int position,
 			int size) throws IOException {
+		
 		ByteBuffer bb = ByteBuffer.allocate(size);
 		FileChannel fc = getFile(tableFileName);
-		fc.read(bb, (long) position);
-		return bb;
-	}
-
-	private ByteBuffer readByteBuffer(String tableFileName, int size)
-			throws IOException {
-		ByteBuffer bb = ByteBuffer.allocate(size);
-		FileChannel fc = getFile(tableFileName);
-		fc.read(bb);
+		
+		if(position!=-1){
+			fc.read(bb, (long) position);
+		}else{
+			fc.read(bb);
+		}
+		
 		return bb;
 	}
 
@@ -146,75 +177,56 @@ public class FileMgr {
 			throws IOException {
 		ByteBuffer bb = readByteBuffer(tableFileName, position,
 				IntegerByteCount);
-		return bb.getInt(0);
-	}
-
-	private Integer readInteger(String tableFileName) throws IOException {
-		ByteBuffer bb = readByteBuffer(tableFileName, IntegerByteCount);
 		bb.rewind();
 		return bb.getInt();
 	}
-
 	/*****
 	 * Read String
 	 * 
 	 * @throws IOException
 	 *****/
-	private String readString(String tableFileName) throws IOException {
-		int length = readInteger(tableFileName);
-
-		ByteBuffer bb = readByteBuffer(tableFileName, length);
+	private String readString(String tableFileName, int position) throws IOException {
+		int length = readInteger(tableFileName, position);
+		
+		int offset = position+4;
+		if(position==-1){
+			offset = -1;
+		}
+		
+		ByteBuffer bb = readByteBuffer(tableFileName, offset, length);
 		return new String(bb.array());
 	}
 
-	// private String readString(String tableFileName, int position)
-	// throws IOException {
-	//
-	// int length = readInteger(tableFileName);
-	// ByteBuffer bb = readByteBuffer(tableFileName, position, length);
-	// bb.position(position);
-	// return new String(bb.array());
-	// }
-
 	/*****
-	 * Append
+	 * write string
 	 * 
 	 * @throws IOException
 	 *****/
-	private void append(String tableFileName, ByteBuffer bb) throws IOException {
-		FileChannel fc = getFile(tableFileName);
-		long position = fc.size();
-		fc.write(bb, position);
-
-	}
-
-	private void appendString(String tableFileName, String stringToAppend)
-			throws IOException {
-
+	private void writeString(String tableFileName, int position, String stringToAppend) throws IOException{
 		byte[] bytes = stringToAppend.getBytes();
+		ByteBuffer bblen = ByteBuffer.allocate(IntegerByteCount).putInt(bytes.length);
+		bblen = ByteBuffer.wrap(bblen.array());
+		
 		ByteBuffer bb = ByteBuffer.wrap(bytes);
-		appendInteger(tableFileName, bytes.length);
-		append(tableFileName, bb);
+		FileChannel fc = getFile(tableFileName);
+		
+		if(position!=-1){
+			fc.position(position);
+		}
+		fc.write(bblen);
+		fc.write(bb);
 	}
 
-	private void appendInteger(String tableFileName, int integerToAppend)
-			throws IOException {
-		ByteBuffer bb = ByteBuffer.allocate(IntegerByteCount).putInt(
-				integerToAppend);
-		bb = ByteBuffer.wrap(bb.array());
-		append(tableFileName, bb);
-	}
-
-	/***** Write Integer *****/
-	private void writeInteger(String tableFileName, int integer, int position) {
+	/***** Write Integer 
+	 * @throws IOException *****/
+	private void writeInteger(String tableFileName, int position,  int integer) throws IOException {
 		ByteBuffer bb = ByteBuffer.allocate(IntegerByteCount).putInt(integer);
 		bb = ByteBuffer.wrap(bb.array());
-		try {
-			FileChannel fc = getFile(tableFileName);
-			fc.write(bb, position);
-		} catch (IOException e) {
-			e.printStackTrace();
+		FileChannel fc = getFile(tableFileName);
+		if(position!=-1){
+			fc.position(position);
 		}
+		fc.write(bb);
 	}
 
 }

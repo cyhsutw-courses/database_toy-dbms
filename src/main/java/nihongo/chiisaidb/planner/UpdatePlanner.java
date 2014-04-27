@@ -17,7 +17,7 @@ public class UpdatePlanner {
 		Chiisai.mdMgr().createTable(data.tableName(), data.schema());
 	}
 
-	public void executeInsert(InsertData data) throws IOException {
+	public void executeInsert(InsertData data) throws Exception {
 		TableScan ts = new TableScan(data.tblName());
 		ts.insert(data.values());
 	}
