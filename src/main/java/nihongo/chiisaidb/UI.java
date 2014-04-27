@@ -7,6 +7,7 @@ import java.util.List;
 
 import nihongo.chiisaidb.metadata.Schema;
 import nihongo.chiisaidb.planner.data.QueryData;
+import nihongo.chiisaidb.planner.query.Aggregation;
 import nihongo.chiisaidb.predicate.ConstantExpression;
 import nihongo.chiisaidb.predicate.FieldNameExpression;
 import nihongo.chiisaidb.predicate.Predicate;
@@ -183,6 +184,38 @@ public class UI {
 					new FieldNameExpression("StudentId"), Term.OP_EQ);
 			QueryData data = new QueryData(true, new Predicate(t));
 			data.setTable("Student", "Enroll");
+			Chiisai.planner().testQuery(data);
+		} else if (command.compareToIgnoreCase("count3") == 0) {
+			System.out.println("select count(*) from student");
+			QueryData data = new QueryData(true, null);
+			data.setTable("Student");
+			data.setAggn(Aggregation.COUNT);
+			Chiisai.planner().testQuery(data);
+		} else if (command.compareToIgnoreCase("count8") == 0) {
+			System.out
+					.println("select count(*) from student, enroll where id = studentid");
+			Term t = new Term(new FieldNameExpression("ID"),
+					new FieldNameExpression("StudentId"), Term.OP_EQ);
+			QueryData data = new QueryData(true, new Predicate(t));
+			data.setTable("Student", "Enroll");
+			data.setAggn(Aggregation.COUNT);
+			Chiisai.planner().testQuery(data);
+		} else if (command.compareToIgnoreCase("sum3") == 0) {
+			System.out.println("select sum(ID) from student");
+			QueryData data = new QueryData(false, null);
+			data.setTable("Student");
+			data.addField("ID");
+			data.setAggn(Aggregation.SUM);
+			Chiisai.planner().testQuery(data);
+		} else if (command.compareToIgnoreCase("sum8") == 0) {
+			System.out
+					.println("select sum(ID) from student, enroll where id = studentid");
+			Term t = new Term(new FieldNameExpression("ID"),
+					new FieldNameExpression("StudentId"), Term.OP_EQ);
+			QueryData data = new QueryData(false, new Predicate(t));
+			data.setTable("Student", "Enroll");
+			data.setAggn(Aggregation.SUM);
+			data.addField("ID");
 			Chiisai.planner().testQuery(data);
 		} else
 			Chiisai.planner().execute(command);

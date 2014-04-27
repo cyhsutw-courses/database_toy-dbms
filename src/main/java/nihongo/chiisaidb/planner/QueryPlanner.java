@@ -7,11 +7,14 @@ import nihongo.chiisaidb.Chiisai;
 import nihongo.chiisaidb.metadata.Schema;
 import nihongo.chiisaidb.metadata.TableInfo;
 import nihongo.chiisaidb.planner.data.QueryData;
+import nihongo.chiisaidb.planner.query.Aggregation;
 import nihongo.chiisaidb.planner.query.ProductScan;
 import nihongo.chiisaidb.planner.query.ProjectScan;
 import nihongo.chiisaidb.planner.query.Scan;
 import nihongo.chiisaidb.planner.query.SelectScan;
 import nihongo.chiisaidb.storage.TableScan;
+import nihongo.chiisaidb.type.Constant;
+import nihongo.chiisaidb.type.IntegerConstant;
 
 public class QueryPlanner {
 
@@ -84,7 +87,12 @@ public class QueryPlanner {
 			System.out.println("Who am I?");
 
 		// Show Result
-		showQueryResult(s, data.fields(), displaysize);
+		if (data.getAggn() == Aggregation.COUNT)
+			showCountResult(s, data.isAllField(), data.fields());
+		else if (data.getAggn() == Aggregation.SUM)
+			showSumResult(s, data.fields().get(0));
+		else
+			showQueryResult(s, data.fields(), displaysize);
 
 	}
 
@@ -103,5 +111,45 @@ public class QueryPlanner {
 			}
 			System.out.println();
 		}
+	}
+
+	private void showCountResult(Scan s, boolean isAllField, List<String> fields)
+			throws Exception {
+		// can't detect null
+		// print field name
+		System.out.print("COUNT(");
+		if (isAllField)
+			System.out.print("*");
+		else
+			for (int i = 0; i < fields.size(); i++) {
+				System.out.print(fields.get(i));
+				if (i != fields.size())
+					System.out.print(", ");
+			}
+		System.out.println(")");
+
+		s.beforeFirst();
+		int count = 0;
+		while (s.next()) {
+			count++;
+		}
+		System.out.println("      " + count);
+	}
+
+	private void showSumResult(Scan s, String field) throws Exception {
+		// can't detect null
+		// print field name
+		System.out.println("SUM(" + field + ")");
+
+		s.beforeFirst();
+		int total = 0;
+		while (s.next()) {
+			Constant c = s.getVal(field);
+			if (c instanceof IntegerConstant)
+				total += ((Integer) c.getValue()).intValue();
+			else
+				throw new UnsupportedOperationException();
+		}
+		System.out.println("    " + total);
 	}
 }

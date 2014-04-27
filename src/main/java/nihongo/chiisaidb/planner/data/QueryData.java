@@ -3,6 +3,7 @@ package nihongo.chiisaidb.planner.data;
 import java.util.ArrayList;
 import java.util.List;
 
+import nihongo.chiisaidb.planner.query.Aggregation;
 import nihongo.chiisaidb.predicate.Predicate;
 
 public class QueryData {
@@ -14,15 +15,19 @@ public class QueryData {
 	private String table2;
 	// where
 	private Predicate pred;
+	// aggn
+	private Aggregation aggn;
 
 	public QueryData() {
 		fields = new ArrayList<String>();
+		aggn = Aggregation.NONE;
 	}
 
 	public QueryData(boolean isAllField, Predicate pred) {
 		this.isAllField = isAllField;
 		fields = new ArrayList<String>();
 		this.pred = pred;
+		aggn = Aggregation.NONE;
 	}
 
 	public void addField(String fname) {
@@ -72,6 +77,14 @@ public class QueryData {
 
 	public void setIsAllField(boolean isAllField) {
 		this.isAllField = isAllField;
+	}
+
+	public void setAggn(Aggregation aggn) {
+		this.aggn = aggn;
+	}
+
+	public Aggregation getAggn() {
+		return aggn;
 	}
 
 }
