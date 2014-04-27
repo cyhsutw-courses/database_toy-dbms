@@ -18,9 +18,23 @@ import nihongo.chiisaidb.type.IntegerType;
 import nihongo.chiisaidb.type.VarcharConstant;
 import nihongo.chiisaidb.type.VarcharType;
 
+import nihongo.chiisaidb.util.*;
+
 public class UI {
 
 	public static void main(String[] args) throws Exception {
+		
+		/*
+		 * Added to show how to parse SQLs from a file
+		 * 
+		 * */
+		SQLSpliter spliter = new SQLSpliter();
+		List<String> sqls = spliter.splitSQLfromFile("SQL_FILE.sql");
+		for(String sql : sqls){
+			System.out.println(sql);
+		}
+		
+		
 		UI ui = new UI();
 		Chiisai.init();
 
