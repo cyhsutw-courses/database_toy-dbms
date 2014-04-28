@@ -128,11 +128,11 @@ public class Parser {
 			querydata.setIsAllField(true);
 		} else {
 			querydata.setIsAllField(false);
-			do {
-				if (lex.matchDelim(','))
-					lex.eatDelim(',');
+			querydata.addField(id());
+			while (lex.matchDelim(',')) {
+				lex.eatDelim(',');
 				querydata.addField(id());
-			} while (lex.matchDelim(','));
+			}
 		}
 
 		if (lex.matchKeyword("from")) {

@@ -28,9 +28,11 @@ public class Verifier {
 	private static String attriName;
 	private static Type type;
 	private static Constant constant;
-	private static TableInfo tableInfo;
+	private static TableInfo tableInfo1;
+	private static TableInfo tableInfo2;
 	private static TableScan tableScan;
 	private static String primaryKey;
+	private static boolean table2exist;
 
 	public static void verifyCreateTableData(CreateTableData data) {
 
@@ -73,8 +75,8 @@ public class Verifier {
 		if (!Chiisai.mdMgr().hasTable(tblName))
 			throw new BadSemanticException(ErrorMessage.TABLE_NOT_EXIST);
 
-		tableInfo = Chiisai.mdMgr().getTableInfo(tblName);
-		Schema schema = tableInfo.schema();
+		tableInfo1 = Chiisai.mdMgr().getTableInfo(tblName);
+		Schema schema = tableInfo1.schema();
 		Set<String> primaryKeySet = schema.primaryKeySet();
 
 		Map<String, Type> fields = schema.fields();
@@ -141,6 +143,48 @@ public class Verifier {
 	}
 
 	public static void verifyQueryData(QueryData data) {
-		// TODO
+
+		String tblName1 = data.getTable1();
+		String tblName2 = data.getTable2();
+
+		// check if table1, table2 not exist
+
+		if (!Chiisai.mdMgr().hasTable(tblName1))
+			throw new BadSemanticException(ErrorMessage.TABLE_NOT_EXIST);
+		if (!tblName2.equals("")) {
+			if (Chiisai.mdMgr().hasTable(tblName2)) {
+				table2exist = true;
+				tableInfo2 = Chiisai.mdMgr().getTableInfo(tblName1);
+				Schema schema2 = tableInfo2.schema();
+
+			} else
+				throw new BadSemanticException(ErrorMessage.TABLE_NOT_EXIST);
+		} else
+			table2exist = false;
+		tableInfo1 = Chiisai.mdMgr().getTableInfo(tblName1);
+		Schema schema1 = tableInfo1.schema();
+
+		List<String> attriNames = schema1.fieldNames();
+		// check if fldname not exist (select
+
+		if (!data.isAllField()) {
+
+			List<String> fieldNames = data.fields();
+			if (fieldNames.size() == 0)
+				throw new BadSemanticException(ErrorMessage.TABLE_NOT_EXIST);
+			// no fldName
+
+			Iterator<String> iteratorFN = fieldNames.iterator();
+			while (iteratorFN.hasNext()) {
+				fldName = iteratorFN.next();
+				if (!attriNames.contains(fldName))
+					// check table2
+					throw new BadSemanticException(ErrorMessage.Field_NOT_EXIST);
+			}
+
+		}
+
+		// check if fldname not exist (where
+
 	}
 }
