@@ -13,6 +13,10 @@ import nihongo.chiisaidb.metadata.TableInfo;
 import nihongo.chiisaidb.planner.data.CreateTableData;
 import nihongo.chiisaidb.planner.data.InsertData;
 import nihongo.chiisaidb.planner.data.QueryData;
+import nihongo.chiisaidb.predicate.Expression;
+import nihongo.chiisaidb.predicate.FieldNameExpression;
+import nihongo.chiisaidb.predicate.Predicate;
+import nihongo.chiisaidb.predicate.Term;
 import nihongo.chiisaidb.storage.TableScan;
 import nihongo.chiisaidb.type.Constant;
 import nihongo.chiisaidb.type.IntegerConstant;
@@ -148,31 +152,27 @@ public class Verifier {
 		String tblName2 = data.getTable2();
 
 		// check if table1, table2 not exist
-
 		if (!Chiisai.mdMgr().hasTable(tblName1))
 			throw new BadSemanticException(ErrorMessage.TABLE_NOT_EXIST);
 		if (!tblName2.equals("")) {
+			table2exist = true;
 			if (Chiisai.mdMgr().hasTable(tblName2)) {
-				table2exist = true;
 				tableInfo2 = Chiisai.mdMgr().getTableInfo(tblName1);
-				Schema schema2 = tableInfo2.schema();
-
+				// Schema schema2 = tableInfo2.schema();
 			} else
 				throw new BadSemanticException(ErrorMessage.TABLE_NOT_EXIST);
 		} else
 			table2exist = false;
 		tableInfo1 = Chiisai.mdMgr().getTableInfo(tblName1);
 		Schema schema1 = tableInfo1.schema();
-
 		List<String> attriNames = schema1.fieldNames();
-		// check if fldname not exist (select
 
+		// check if fldname not exist (select
 		if (!data.isAllField()) {
 
 			List<String> fieldNames = data.fields();
 			if (fieldNames.size() == 0)
 				throw new BadSemanticException(ErrorMessage.TABLE_NOT_EXIST);
-			// no fldName
 
 			Iterator<String> iteratorFN = fieldNames.iterator();
 			while (iteratorFN.hasNext()) {
@@ -185,6 +185,27 @@ public class Verifier {
 		}
 
 		// check if fldname not exist (where
-
+		Predicate pred = data.pred();
+		if (pred != null) {
+			Term term1 = pred.getTerm1();
+			Expression lhs = term1.getLHS();
+			Expression rhs = term1.getRHS();
+			if (!attriNames.contains(lhs))
+				throw new BadSemanticException(ErrorMessage.Field_NOT_EXIST);
+			if (rhs instanceof FieldNameExpression)
+				if (!attriNames.contains(lhs))
+					throw new BadSemanticException(ErrorMessage.Field_NOT_EXIST);
+			Term term2 = pred.getTerm2();
+			if (term2 != null) {
+				lhs = term1.getLHS();
+				rhs = term1.getRHS();
+				if (!attriNames.contains(lhs))
+					throw new BadSemanticException(ErrorMessage.Field_NOT_EXIST);
+				if (rhs instanceof FieldNameExpression)
+					if (!attriNames.contains(lhs))
+						throw new BadSemanticException(
+								ErrorMessage.Field_NOT_EXIST);
+			}
+		}
 	}
 }

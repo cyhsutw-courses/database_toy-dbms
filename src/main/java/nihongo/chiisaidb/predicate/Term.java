@@ -92,6 +92,14 @@ public class Term {
 		this.op = op;
 	}
 
+	public Expression getLHS() {
+		return lhs;
+	}
+
+	public Expression getRHS() {
+		return rhs;
+	}
+
 	public boolean isSatisfied(Record rec) throws Exception {
 		return op.isSatisfied(lhs, rhs, rec);
 	}

@@ -23,6 +23,14 @@ public class Predicate {
 		this.link = link;
 	}
 
+	public Term getTerm1() {
+		return term1;
+	}
+
+	public Term getTerm2() {
+		return term2;
+	}
+
 	public boolean isSatisfied(Record rec) throws Exception {
 		if (!term1.isSatisfied(rec) || !term2.isSatisfied(rec))
 			return false;
