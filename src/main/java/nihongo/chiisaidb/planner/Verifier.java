@@ -170,13 +170,26 @@ public class Verifier {
 		if (!data.isAllField()) {
 
 			List<String> fieldNames = data.fields();
+			List<String> prefixes = data.Prefix();
+
 			if (fieldNames.size() == 0)
 				throw new BadSemanticException(ErrorMessage.INCORRECT_FORMAT);
 
 			Iterator<String> iteratorFN = fieldNames.iterator();
+			Iterator<String> iteratorPR = prefixes.iterator();
+			String prefix;
 			if (!table2exist) {
 				while (iteratorFN.hasNext()) {
 					fldName = iteratorFN.next();
+					prefix = iteratorPR.next();
+					if (prefix.isEmpty()) {
+						// set it to tblname1
+					} else if (!data.getTable(prefix).equals(tblName1)) {
+						throw new BadSemanticException(
+								ErrorMessage.FIELD_NOT_EXIST);
+					} else {
+						// set it to tblname1
+					}
 					if (!attriNames.contains(fldName)) {
 						throw new BadSemanticException(
 								ErrorMessage.FIELD_NOT_EXIST);
@@ -188,15 +201,31 @@ public class Verifier {
 				List<String> attriNames2 = schema2.fieldNames();
 				while (iteratorFN.hasNext()) {
 					fldName = iteratorFN.next();
-					if (!attriNames.contains(fldName)) {
-						// check table2
-						// System.out.println(fldName + " not in " + tblName1);
-						if (!attriNames2.contains(fldName)) {
+					prefix = iteratorPR.next();
+					if (prefix.isEmpty()) {
+						if (!attriNames.contains(fldName)) {
+							// check table2
 							// System.out.println(fldName + " not in " +
-							// tblName2);
-							throw new BadSemanticException(
-									ErrorMessage.FIELD_NOT_EXIST);
+							// tblName1);
+							if (!attriNames2.contains(fldName)) {
+								// System.out.println(fldName + " not in " +
+								// tblName2);
+								throw new BadSemanticException(
+										ErrorMessage.FIELD_NOT_EXIST);
+							} else {
+								// set it to tblname2
+							}
+						} else {
+							if (!attriNames2.contains(fldName)) {
+								// set it to tblname1
+
+							} else {
+								throw new BadSemanticException(
+										ErrorMessage.FIELD_IN_BOTH_TABLE);
+							}
 						}
+					} else {
+						// not empty
 					}
 				}
 			}
@@ -281,6 +310,8 @@ public class Verifier {
 					expression.setTableName(tblName1);
 			else if (attriNames2.contains(expression.toString()))
 				expression.setTableName(tblName2);
+			else
+				throw new BadSemanticException(ErrorMessage.FIELD_NOT_EXIST);
 		} else {
 			String tablename = data.getTable(expression.asTableName());
 			if (tablename.isEmpty())
