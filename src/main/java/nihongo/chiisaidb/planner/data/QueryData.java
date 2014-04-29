@@ -23,6 +23,7 @@ public class QueryData {
 	private Aggregation aggn;
 
 	public QueryData() {
+		this.isAllField = false;
 		fields = new ArrayList<String>();
 		prefix = new ArrayList<String>();
 		this.pred = null;

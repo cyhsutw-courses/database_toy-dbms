@@ -13,6 +13,7 @@ import nihongo.chiisaidb.metadata.TableInfo;
 import nihongo.chiisaidb.planner.data.CreateTableData;
 import nihongo.chiisaidb.planner.data.InsertData;
 import nihongo.chiisaidb.planner.data.QueryData;
+import nihongo.chiisaidb.planner.query.Aggregation;
 import nihongo.chiisaidb.predicate.Expression;
 import nihongo.chiisaidb.predicate.FieldNameExpression;
 import nihongo.chiisaidb.predicate.Predicate;
@@ -163,86 +164,103 @@ public class Verifier {
 		tableInfo1 = Chiisai.mdMgr().getTableInfo(tblName1);
 		Schema schema1 = tableInfo1.schema();
 		List<String> attriNames = schema1.fieldNames();
-
-		// check if fldname not exist (select
-		if (!data.isAllField()) {
-
+		if (data.getAggn() == Aggregation.SUM
+				|| data.getAggn() == Aggregation.COUNT) {
 			List<String> fieldNames = data.fields();
-			List<String> prefixes = data.Prefix();
-
-			if (fieldNames.size() == 0)
+			if (fieldNames.size() > 1)
 				throw new BadSemanticException(ErrorMessage.INCORRECT_FORMAT);
-
-			Iterator<String> iteratorFN = fieldNames.iterator();
-			Iterator<String> iteratorPR = prefixes.iterator();
-			String prefix;
 			if (!table2exist) {
-				while (iteratorFN.hasNext()) {
+				Iterator<String> iteratorFN = fieldNames.iterator();
+				if (iteratorFN.hasNext()) {
 					fldName = iteratorFN.next();
-					prefix = iteratorPR.next();
-					if (prefix.isEmpty()) {
-						// set it to tblname1
-					} else if (!data.getTable(prefix).equals(tblName1)) {
-						throw new BadSemanticException(
-								ErrorMessage.FIELD_NOT_EXIST);
-					} else {
-						// set it to tblname1
-					}
 					if (!attriNames.contains(fldName)) {
 						throw new BadSemanticException(
 								ErrorMessage.FIELD_NOT_EXIST);
 					}
 				}
-			} else {
-				tableInfo2 = Chiisai.mdMgr().getTableInfo(tblName2);
-				Schema schema2 = tableInfo2.schema();
-				List<String> attriNames2 = schema2.fieldNames();
-				while (iteratorFN.hasNext()) {
-					fldName = iteratorFN.next();
-					prefix = iteratorPR.next();
-					if (prefix.isEmpty()) {
+			} else
+				throw new BadSemanticException(ErrorMessage.INCORRECT_FORMAT);
+
+		} else {// Aggregation.NONE
+			if (!data.isAllField()) {
+
+				List<String> fieldNames = data.fields();
+				List<String> prefixes = data.Prefix();
+
+				if (fieldNames.size() == 0)
+					throw new BadSemanticException(
+							ErrorMessage.INCORRECT_FORMAT);
+
+				Iterator<String> iteratorFN = fieldNames.iterator();
+				Iterator<String> iteratorPR = prefixes.iterator();
+				String prefix;
+				// check if fldname not exist (select
+
+				if (!table2exist) {
+					while (iteratorFN.hasNext()) {
+						fldName = iteratorFN.next();
+						prefix = iteratorPR.next();
+						if (prefix.isEmpty()) {
+						} else if (!data.getTable(prefix).equals(tblName1)) {
+							throw new BadSemanticException(
+									ErrorMessage.FIELD_NOT_EXIST);
+						}
 						if (!attriNames.contains(fldName)) {
-							if (!attriNames2.contains(fldName))
+							throw new BadSemanticException(
+									ErrorMessage.FIELD_NOT_EXIST);
+						}
+					}
+				} else {
+					tableInfo2 = Chiisai.mdMgr().getTableInfo(tblName2);
+					Schema schema2 = tableInfo2.schema();
+					List<String> attriNames2 = schema2.fieldNames();
+					while (iteratorFN.hasNext()) {
+						fldName = iteratorFN.next();
+						prefix = iteratorPR.next();
+						if (prefix.isEmpty()) {
+							if (!attriNames.contains(fldName)) {
+								if (!attriNames2.contains(fldName))
+									throw new BadSemanticException(
+											ErrorMessage.FIELD_NOT_EXIST);
+							} else {
+								if (attriNames2.contains(fldName))
+									throw new BadSemanticException(
+											ErrorMessage.FIELD_IN_BOTH_TABLE);
+							}
+						} else {
+							// prefix is not empty
+							String tablename = data.getTable(prefix);
+
+							if (tablename.isEmpty()) {
 								throw new BadSemanticException(
 										ErrorMessage.FIELD_NOT_EXIST);
-						} else {
-							if (attriNames2.contains(fldName))
+							}
+							if (tablename.equals(tblName1)
+									&& attriNames.contains(fldName)) {
+							} else if (tablename.equals(tblName2)
+									&& attriNames2.contains(fldName)) {
+							} else
 								throw new BadSemanticException(
-										ErrorMessage.FIELD_IN_BOTH_TABLE);
+										ErrorMessage.FIELD_NOT_EXIST);
 						}
-					} else {
-						// prefix is not empty
-						String tablename = data.getTable(prefix);
 
-						if (tablename.isEmpty()) {
-							throw new BadSemanticException(
-									ErrorMessage.FIELD_NOT_EXIST);
-						}
-						if (tablename.equals(tblName1)
-								&& attriNames.contains(fldName)) {
-						} else if (tablename.equals(tblName2)
-								&& attriNames2.contains(fldName)) {
-						} else
-							throw new BadSemanticException(
-									ErrorMessage.FIELD_NOT_EXIST);
+					}
+				}
+			} else {
+				// if * need to handle the same fldname
+				if (table2exist) {
+					tableInfo2 = Chiisai.mdMgr().getTableInfo(tblName2);
+					Schema schema2 = tableInfo2.schema();
+					int i, tablesize1 = attriNames.size(), tablesize2 = schema2
+							.fieldNames().size();
+					for (i = 0; i < tablesize1; i++) {
+						data.addPrefix(tblName1);
+					}
+					for (i = 0; i < tablesize2; i++) {
+						data.addPrefix(tblName1);
 					}
 
 				}
-			}
-		} else {
-			// if * need to handle the same fldname
-			if (table2exist) {
-				tableInfo2 = Chiisai.mdMgr().getTableInfo(tblName2);
-				Schema schema2 = tableInfo2.schema();
-				int i, tablesize1 = attriNames.size(), tablesize2 = schema2
-						.fieldNames().size();
-				for (i = 0; i < tablesize1; i++) {
-					data.addPrefix(tblName1);
-				}
-				for (i = 0; i < tablesize2; i++) {
-					data.addPrefix(tblName1);
-				}
-
 			}
 		}
 
