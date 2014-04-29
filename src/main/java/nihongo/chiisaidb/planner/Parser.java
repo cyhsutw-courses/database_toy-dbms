@@ -8,6 +8,7 @@ import nihongo.chiisaidb.metadata.Schema;
 import nihongo.chiisaidb.planner.data.CreateTableData;
 import nihongo.chiisaidb.planner.data.InsertData;
 import nihongo.chiisaidb.planner.data.QueryData;
+import nihongo.chiisaidb.planner.query.Aggregation;
 import nihongo.chiisaidb.predicate.ConstantExpression;
 import nihongo.chiisaidb.predicate.Expression;
 import nihongo.chiisaidb.predicate.FieldNameExpression;
@@ -123,18 +124,40 @@ public class Parser {
 	private QueryData select() {
 		QueryData querydata = new QueryData();
 		lex.eatKeyword("select");
-		if (lex.matchDelim('*')) {
+		if (lex.matchKeyword("count")) {
+			lex.eatKeyword("count");
+			querydata.setAggn(Aggregation.COUNT);
+			lex.eatDelim('(');
+			if (lex.matchDelim('*')) {
+				lex.eatDelim('*');
+				querydata.setIsAllField(true);
+			} else {
+				querydata.setIsAllField(false);
+				querydata.addField(id());
+			}
+			lex.eatDelim(')');
+
+		} else if (lex.matchKeyword("sum")) {
+			lex.eatKeyword("sum");
+			querydata.setIsAllField(false);
+			querydata.setAggn(Aggregation.SUM);
+			lex.eatDelim('(');
+			querydata.addField(id());
+			lex.eatDelim(')');
+
+		} else if (lex.matchDelim('*')) {
 			lex.eatDelim('*');
 			querydata.setIsAllField(true);
+
 		} else {
 			querydata.setIsAllField(false);
 			selectField(querydata);
-
 			while (lex.matchDelim(',')) {
 				lex.eatDelim(',');
 				selectField(querydata);
 			}
 		}
+
 		if (lex.matchKeyword("from")) {
 			lex.eatKeyword("from");
 			String tblname1 = id();

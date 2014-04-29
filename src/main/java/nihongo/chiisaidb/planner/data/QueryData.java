@@ -49,9 +49,6 @@ public class QueryData {
 	}
 
 	public void addPrefix(String tblname) {
-		if (isAllField)
-			throw new UnsupportedOperationException(
-					"haved been chosen all field.");
 		prefix.add(tblname);
 	}
 

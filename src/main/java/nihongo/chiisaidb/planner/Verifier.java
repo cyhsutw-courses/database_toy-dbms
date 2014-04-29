@@ -147,7 +147,6 @@ public class Verifier {
 	}
 
 	public static void verifyQueryData(QueryData data) {
-
 		String tblName1 = data.getTable1();
 		String tblName2 = data.getTable2();
 		// check if table1, table2 not exist
@@ -157,7 +156,6 @@ public class Verifier {
 			table2exist = true;
 			if (Chiisai.mdMgr().hasTable(tblName2)) {
 				tableInfo2 = Chiisai.mdMgr().getTableInfo(tblName1);
-				//
 			} else
 				throw new BadSemanticException(ErrorMessage.TABLE_NOT_EXIST);
 		} else
@@ -231,11 +229,24 @@ public class Verifier {
 
 				}
 			}
+		} else {
+			// if * need to handle the same fldname
+			if (table2exist) {
+				tableInfo2 = Chiisai.mdMgr().getTableInfo(tblName2);
+				Schema schema2 = tableInfo2.schema();
+				int i, tablesize1 = attriNames.size(), tablesize2 = schema2
+						.fieldNames().size();
+				for (i = 0; i < tablesize1; i++) {
+					data.addPrefix(tblName1);
+				}
+				for (i = 0; i < tablesize2; i++) {
+					data.addPrefix(tblName1);
+				}
+
+			}
 		}
 
 		// check if fldname not exist (where
-
-		// table name in expression could be nickname
 		Predicate pred = data.pred();
 		if (pred != null) {
 			Term term1 = pred.getTerm1();
@@ -266,7 +277,7 @@ public class Verifier {
 					checkField2((FieldNameExpression) lhs, data, attriNames,
 							attriNames2, tblName1, tblName2);
 				if (rhs instanceof FieldNameExpression)
-					checkField2((FieldNameExpression) lhs, data, attriNames,
+					checkField2((FieldNameExpression) rhs, data, attriNames,
 							attriNames2, tblName1, tblName2);
 
 				Term term2 = pred.getTerm2();
@@ -277,7 +288,7 @@ public class Verifier {
 						checkField2((FieldNameExpression) lhs, data,
 								attriNames, attriNames2, tblName1, tblName2);
 					if (rhs instanceof FieldNameExpression)
-						checkField2((FieldNameExpression) lhs, data,
+						checkField2((FieldNameExpression) rhs, data,
 								attriNames, attriNames2, tblName1, tblName2);
 				}
 			}
@@ -303,6 +314,7 @@ public class Verifier {
 	private static void checkField2(FieldNameExpression expression,
 			QueryData data, List<String> attriNames, List<String> attriNames2,
 			String tblName1, String tblName2) {
+
 		if (expression.asTableName().isEmpty()) {
 			if (attriNames.contains(expression.toString()))
 				if (attriNames2.contains(expression.toString()))
