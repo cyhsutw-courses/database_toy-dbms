@@ -5,6 +5,7 @@ import nihongo.chiisaidb.type.Constant;
 
 public class FieldNameExpression implements Expression {
 	private String fldName;
+	private String tableName;
 
 	/**
 	 * Creates a new expression by wrapping a field.
@@ -14,6 +15,7 @@ public class FieldNameExpression implements Expression {
 	 */
 	public FieldNameExpression(String fldName) {
 		this.fldName = fldName;
+		this.tableName = null;
 	}
 
 	/**
@@ -72,4 +74,13 @@ public class FieldNameExpression implements Expression {
 	public String toString() {
 		return fldName;
 	}
+
+	public void setTableName(String tableName) {
+		this.tableName = tableName;
+	}
+
+	public String asTableName() {
+		return tableName;
+	}
+
 }

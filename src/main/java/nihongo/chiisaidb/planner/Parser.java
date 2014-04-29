@@ -138,18 +138,31 @@ public class Parser {
 		if (lex.matchKeyword("from")) {
 			lex.eatKeyword("from");
 			String tblname1 = id();
+			querydata.setNickname1(tblname1);
+			if (lex.matchKeyword("as")) {
+				lex.eatKeyword("as");
+				String nickname1 = id();
+				querydata.setNickname1(nickname1);
+			}
 			if (lex.matchKeyword("where")) {
 				lex.eatKeyword("where");
 				querydata.setPredicate(predicate());
 			} else if (lex.matchKeyword(",")) {
 				String tblname2 = id();
 				querydata.setTable(tblname1, tblname2);
+				querydata.setNickname2(tblname2);
+				if (lex.matchKeyword("as")) {
+					lex.eatKeyword("as");
+					String nickname2 = id();
+					querydata.setNickname2(nickname2);
+				}
 				if (lex.matchKeyword("where")) {
 					lex.eatKeyword("where");
 					querydata.setPredicate(predicate());
 				}
 			} else if (lex.matchKeyword(";")) {
 				querydata.setTable(tblname1);
+
 			} else
 				throw new UnsupportedOperationException(
 						ErrorMessage.SYNTAX_ERROR);
@@ -240,6 +253,12 @@ public class Parser {
 	}
 
 	private Expression queryExpression() {
+		// //////////////////////////////
+		if (lex.matchId()) {
+
+		}
+
+		// //////////////////////////////
 		return lex.matchId() ? new FieldNameExpression(id())
 				: new ConstantExpression(constant());
 	}

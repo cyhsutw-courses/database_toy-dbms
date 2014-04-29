@@ -158,7 +158,7 @@ public class Verifier {
 			table2exist = true;
 			if (Chiisai.mdMgr().hasTable(tblName2)) {
 				tableInfo2 = Chiisai.mdMgr().getTableInfo(tblName1);
-				// Schema schema2 = tableInfo2.schema();
+				//
 			} else
 				throw new BadSemanticException(ErrorMessage.TABLE_NOT_EXIST);
 		} else
@@ -172,16 +172,29 @@ public class Verifier {
 
 			List<String> fieldNames = data.fields();
 			if (fieldNames.size() == 0)
-				throw new BadSemanticException(ErrorMessage.TABLE_NOT_EXIST);
+				throw new BadSemanticException(ErrorMessage.INCORRECT_FORMAT);
 
 			Iterator<String> iteratorFN = fieldNames.iterator();
-			while (iteratorFN.hasNext()) {
-				fldName = iteratorFN.next();
-				if (!attriNames.contains(fldName))
-					// check table2
-					throw new BadSemanticException(ErrorMessage.Field_NOT_EXIST);
+			if (!table2exist) {
+				while (iteratorFN.hasNext()) {
+					fldName = iteratorFN.next();
+					if (!attriNames.contains(fldName))
+						throw new BadSemanticException(
+								ErrorMessage.Field_NOT_EXIST);
+				}
+			} else {
+				Schema schema2 = tableInfo2.schema();
+				List<String> attriNames2 = schema2.fieldNames();
+				while (iteratorFN.hasNext()) {
+					fldName = iteratorFN.next();
+					if (!attriNames.contains(fldName))
+						// check table2
+						if (!attriNames2.contains(fldName)) {
+						} else
+							throw new BadSemanticException(
+									ErrorMessage.Field_NOT_EXIST);
+				}
 			}
-
 		}
 
 		// check if fldname not exist (where

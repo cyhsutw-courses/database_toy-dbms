@@ -13,6 +13,9 @@ public class QueryData {
 	// from
 	private String table1;
 	private String table2;
+	private String nickname1;
+	private String nickname2;
+
 	// where
 	private Predicate pred;
 	// aggn
@@ -52,6 +55,15 @@ public class QueryData {
 		this.table2 = tblName2;
 	}
 
+	public void setNickname1(String nickname) {
+		this.nickname1 = nickname;
+		this.nickname2 = "";
+	}
+
+	public void setNickname2(String nickname2) {
+		this.nickname2 = nickname2;
+	}
+
 	public boolean isAllField() {
 		return isAllField;
 	}
@@ -66,6 +78,14 @@ public class QueryData {
 
 	public String getTable2() {
 		return table2;
+	}
+
+	public String getNickname1() {
+		return nickname1;
+	}
+
+	public String getNickname2() {
+		return nickname2;
 	}
 
 	public Predicate pred() {
