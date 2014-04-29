@@ -204,29 +204,31 @@ public class Verifier {
 					prefix = iteratorPR.next();
 					if (prefix.isEmpty()) {
 						if (!attriNames.contains(fldName)) {
-							// check table2
-							// System.out.println(fldName + " not in " +
-							// tblName1);
-							if (!attriNames2.contains(fldName)) {
-								// System.out.println(fldName + " not in " +
-								// tblName2);
+							if (!attriNames2.contains(fldName))
 								throw new BadSemanticException(
 										ErrorMessage.FIELD_NOT_EXIST);
-							} else {
-								// set it to tblname2
-							}
 						} else {
-							if (!attriNames2.contains(fldName)) {
-								// set it to tblname1
-
-							} else {
+							if (attriNames2.contains(fldName))
 								throw new BadSemanticException(
 										ErrorMessage.FIELD_IN_BOTH_TABLE);
-							}
 						}
 					} else {
-						// not empty
+						// prefix is not empty
+						String tablename = data.getTable(prefix);
+
+						if (tablename.isEmpty()) {
+							throw new BadSemanticException(
+									ErrorMessage.FIELD_NOT_EXIST);
+						}
+						if (tablename.equals(tblName1)
+								&& attriNames.contains(fldName)) {
+						} else if (tablename.equals(tblName2)
+								&& attriNames2.contains(fldName)) {
+						} else
+							throw new BadSemanticException(
+									ErrorMessage.FIELD_NOT_EXIST);
 					}
+
 				}
 			}
 		}
