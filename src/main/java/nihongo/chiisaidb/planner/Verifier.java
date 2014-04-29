@@ -180,7 +180,7 @@ public class Verifier {
 					fldName = iteratorFN.next();
 					if (!attriNames.contains(fldName))
 						throw new BadSemanticException(
-								ErrorMessage.Field_NOT_EXIST);
+								ErrorMessage.FIELD_NOT_EXIST);
 				}
 			} else {
 				Schema schema2 = tableInfo2.schema();
@@ -192,7 +192,7 @@ public class Verifier {
 						if (!attriNames2.contains(fldName)) {
 						} else
 							throw new BadSemanticException(
-									ErrorMessage.Field_NOT_EXIST);
+									ErrorMessage.FIELD_NOT_EXIST);
 				}
 			}
 		}
@@ -207,55 +207,88 @@ public class Verifier {
 			Expression rhs = term1.getRHS();
 			if (!table2exist) {
 				if (lhs instanceof FieldNameExpression)
-					if (!attriNames.contains(lhs))
-						throw new BadSemanticException(
-								ErrorMessage.Field_NOT_EXIST);
+					checkField((FieldNameExpression) lhs, data, attriNames,
+							tblName1);
 				if (rhs instanceof FieldNameExpression)
-					if (!attriNames.contains(rhs))
-						throw new BadSemanticException(
-								ErrorMessage.Field_NOT_EXIST);
+					checkField((FieldNameExpression) rhs, data, attriNames,
+							tblName1);
 				Term term2 = pred.getTerm2();
 				if (term2 != null) {
-					lhs = term1.getLHS();
-					rhs = term1.getRHS();
+					lhs = term2.getLHS();
+					rhs = term2.getRHS();
 					if (lhs instanceof FieldNameExpression)
-						if (!attriNames.contains(lhs))
-							throw new BadSemanticException(
-									ErrorMessage.Field_NOT_EXIST);
+						checkField((FieldNameExpression) lhs, data, attriNames,
+								tblName1);
 					if (rhs instanceof FieldNameExpression)
-						if (!attriNames.contains(rhs))
-							throw new BadSemanticException(
-									ErrorMessage.Field_NOT_EXIST);
+						checkField((FieldNameExpression) rhs, data, attriNames,
+								tblName1);
 				}
 			} else {
 				Schema schema2 = tableInfo2.schema();
 				List<String> attriNames2 = schema2.fieldNames();
 				if (lhs instanceof FieldNameExpression)
-					if (!attriNames.contains(lhs))
-						if (!attriNames2.contains(lhs))
-							throw new BadSemanticException(
-									ErrorMessage.Field_NOT_EXIST);
+					checkField2((FieldNameExpression) lhs, data, attriNames,
+							attriNames2, tblName1, tblName2);
 				if (rhs instanceof FieldNameExpression)
-					if (!attriNames.contains(rhs))
-						if (!attriNames2.contains(rhs))
-							throw new BadSemanticException(
-									ErrorMessage.Field_NOT_EXIST);
+					checkField2((FieldNameExpression) lhs, data, attriNames,
+							attriNames2, tblName1, tblName2);
+
 				Term term2 = pred.getTerm2();
 				if (term2 != null) {
-					lhs = term1.getLHS();
-					rhs = term1.getRHS();
+					lhs = term2.getLHS();
+					rhs = term2.getRHS();
 					if (lhs instanceof FieldNameExpression)
-						if (!attriNames.contains(lhs))
-							if (!attriNames2.contains(lhs))
-								throw new BadSemanticException(
-										ErrorMessage.Field_NOT_EXIST);
+						checkField2((FieldNameExpression) lhs, data,
+								attriNames, attriNames2, tblName1, tblName2);
 					if (rhs instanceof FieldNameExpression)
-						if (!attriNames.contains(rhs))
-							if (!attriNames2.contains(rhs))
-								throw new BadSemanticException(
-										ErrorMessage.Field_NOT_EXIST);
+						checkField2((FieldNameExpression) lhs, data,
+								attriNames, attriNames2, tblName1, tblName2);
 				}
 			}
+		}
+	}
+
+	private static void checkField(FieldNameExpression expression,
+			QueryData data, List<String> attriNames, String tblName) {
+		if (expression.asTableName().isEmpty())
+			expression.setTableName(tblName);
+
+		String tablename = data.getTable(expression.asTableName());
+		if (tablename.isEmpty())
+			throw new BadSemanticException(ErrorMessage.FIELD_NOT_EXIST);
+
+		if (tablename.equals(tblName)
+				&& attriNames.contains(expression.toString()))
+			expression.setTableName(tblName);
+		else
+			throw new BadSemanticException(ErrorMessage.FIELD_NOT_EXIST);
+	}
+
+	private static void checkField2(FieldNameExpression expression,
+			QueryData data, List<String> attriNames, List<String> attriNames2,
+			String tblName1, String tblName2) {
+		if (expression.asTableName().isEmpty()) {
+			if (attriNames.contains(expression.toString()))
+				if (attriNames2.contains(expression.toString()))
+					throw new BadSemanticException(
+							ErrorMessage.FIELD_IN_BOTH_TABLE);
+				else
+					expression.setTableName(tblName1);
+			else if (attriNames2.contains(expression.toString()))
+				expression.setTableName(tblName2);
+		} else {
+			String tablename = data.getTable(expression.asTableName());
+			if (tablename.isEmpty())
+				throw new BadSemanticException(ErrorMessage.FIELD_NOT_EXIST);
+
+			if (tablename.equals(tblName1)
+					&& attriNames.contains(expression.toString()))
+				expression.setTableName(tblName1);
+			else if (tablename.equals(tblName2)
+					&& attriNames2.contains(expression.toString()))
+				expression.setTableName(tblName2);
+			else
+				throw new BadSemanticException(ErrorMessage.FIELD_NOT_EXIST);
 		}
 	}
 }

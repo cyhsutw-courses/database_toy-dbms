@@ -15,7 +15,7 @@ public class FieldNameExpression implements Expression {
 	 */
 	public FieldNameExpression(String fldName) {
 		this.fldName = fldName;
-		this.tableName = null;
+		this.tableName = "";
 	}
 
 	/**
