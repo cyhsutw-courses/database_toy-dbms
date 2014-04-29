@@ -253,14 +253,19 @@ public class Parser {
 	}
 
 	private Expression queryExpression() {
-		// //////////////////////////////
 		if (lex.matchId()) {
-
-		}
-
-		// //////////////////////////////
-		return lex.matchId() ? new FieldNameExpression(id())
-				: new ConstantExpression(constant());
+			String name = id();
+			if (lex.matchDelim('.')) {
+				lex.eatDelim('.');
+				FieldNameExpression expression = new FieldNameExpression(id());
+				expression.setTableName(name);
+				return expression;
+			} else
+				return new FieldNameExpression(name);
+		} else
+			return new ConstantExpression(constant());
+		// return lex.matchId() ? new FieldNameExpression(id())
+		// : new ConstantExpression(constant());
 	}
 
 }

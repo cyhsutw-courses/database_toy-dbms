@@ -80,12 +80,13 @@ public class QueryData {
 		return table2;
 	}
 
-	public String getNickname1() {
-		return nickname1;
-	}
-
-	public String getNickname2() {
-		return nickname2;
+	public String getTable(String nickname) {
+		if (nickname.equals(nickname1))
+			return table1;
+		else if (nickname.equals(nickname2))
+			return table2;
+		else
+			return "";
 	}
 
 	public Predicate pred() {

@@ -198,26 +198,63 @@ public class Verifier {
 		}
 
 		// check if fldname not exist (where
+
+		// table name in expression could be nickname
 		Predicate pred = data.pred();
 		if (pred != null) {
 			Term term1 = pred.getTerm1();
 			Expression lhs = term1.getLHS();
 			Expression rhs = term1.getRHS();
-			if (!attriNames.contains(lhs))
-				throw new BadSemanticException(ErrorMessage.Field_NOT_EXIST);
-			if (rhs instanceof FieldNameExpression)
-				if (!attriNames.contains(lhs))
-					throw new BadSemanticException(ErrorMessage.Field_NOT_EXIST);
-			Term term2 = pred.getTerm2();
-			if (term2 != null) {
-				lhs = term1.getLHS();
-				rhs = term1.getRHS();
-				if (!attriNames.contains(lhs))
-					throw new BadSemanticException(ErrorMessage.Field_NOT_EXIST);
-				if (rhs instanceof FieldNameExpression)
+			if (!table2exist) {
+				if (lhs instanceof FieldNameExpression)
 					if (!attriNames.contains(lhs))
 						throw new BadSemanticException(
 								ErrorMessage.Field_NOT_EXIST);
+				if (rhs instanceof FieldNameExpression)
+					if (!attriNames.contains(rhs))
+						throw new BadSemanticException(
+								ErrorMessage.Field_NOT_EXIST);
+				Term term2 = pred.getTerm2();
+				if (term2 != null) {
+					lhs = term1.getLHS();
+					rhs = term1.getRHS();
+					if (lhs instanceof FieldNameExpression)
+						if (!attriNames.contains(lhs))
+							throw new BadSemanticException(
+									ErrorMessage.Field_NOT_EXIST);
+					if (rhs instanceof FieldNameExpression)
+						if (!attriNames.contains(rhs))
+							throw new BadSemanticException(
+									ErrorMessage.Field_NOT_EXIST);
+				}
+			} else {
+				Schema schema2 = tableInfo2.schema();
+				List<String> attriNames2 = schema2.fieldNames();
+				if (lhs instanceof FieldNameExpression)
+					if (!attriNames.contains(lhs))
+						if (!attriNames2.contains(lhs))
+							throw new BadSemanticException(
+									ErrorMessage.Field_NOT_EXIST);
+				if (rhs instanceof FieldNameExpression)
+					if (!attriNames.contains(rhs))
+						if (!attriNames2.contains(rhs))
+							throw new BadSemanticException(
+									ErrorMessage.Field_NOT_EXIST);
+				Term term2 = pred.getTerm2();
+				if (term2 != null) {
+					lhs = term1.getLHS();
+					rhs = term1.getRHS();
+					if (lhs instanceof FieldNameExpression)
+						if (!attriNames.contains(lhs))
+							if (!attriNames2.contains(lhs))
+								throw new BadSemanticException(
+										ErrorMessage.Field_NOT_EXIST);
+					if (rhs instanceof FieldNameExpression)
+						if (!attriNames.contains(rhs))
+							if (!attriNames2.contains(rhs))
+								throw new BadSemanticException(
+										ErrorMessage.Field_NOT_EXIST);
+				}
 			}
 		}
 	}
