@@ -185,7 +185,7 @@ public class Verifier {
 			if (!data.isAllField()) {
 
 				List<String> fieldNames = data.fields();
-				List<String> prefixes = data.Prefix();
+				List<String> prefixes = data.prefix();
 
 				if (fieldNames.size() == 0)
 					throw new BadSemanticException(
@@ -257,7 +257,7 @@ public class Verifier {
 						data.addPrefix(tblName1);
 					}
 					for (i = 0; i < tablesize2; i++) {
-						data.addPrefix(tblName1);
+						data.addPrefix(tblName2);
 					}
 
 				}

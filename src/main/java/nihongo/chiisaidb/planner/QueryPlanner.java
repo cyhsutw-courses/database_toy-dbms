@@ -1,7 +1,11 @@
 package nihongo.chiisaidb.planner;
 
 import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Map;
+import java.util.Set;
 
 import nihongo.chiisaidb.Chiisai;
 import nihongo.chiisaidb.metadata.Schema;
@@ -62,10 +66,14 @@ public class QueryPlanner {
 			}
 		}
 
+		Set<String> fset = new HashSet<String>(data.fields());
+		boolean isDupField = (fset.size() < data.fields().size());
+
 		Scan s = new TableScan(data.getTable1());
 		// Product
 		if (!isOnlyOneTable)
-			s = new ProductScan(s, new TableScan(data.getTable2()));
+			s = new ProductScan(s, new TableScan(data.getTable2()),
+					data.getTable1(), data.getTable2());
 
 		// Select
 		if (data.pred() != null)
@@ -75,24 +83,32 @@ public class QueryPlanner {
 		if (!data.isAllField())
 			s = new ProjectScan(s, data.fields());
 
-		if (s instanceof TableScan)
-			System.out.println("I'm TableScan~");
-		else if (s instanceof ProductScan)
-			System.out.println("I'm ProductScan~");
-		else if (s instanceof SelectScan)
-			System.out.println("I'm SelectScan~");
-		else if (s instanceof ProjectScan)
-			System.out.println("I'm ProjectScan~");
-		else
-			System.out.println("Who am I?");
+		// if (s instanceof TableScan)
+		// System.out.println("I'm TableScan~");
+		// else if (s instanceof ProductScan)
+		// System.out.println("I'm ProductScan~");
+		// else if (s instanceof SelectScan)
+		// System.out.println("I'm SelectScan~");
+		// else if (s instanceof ProjectScan)
+		// System.out.println("I'm ProjectScan~");
+		// else
+		// System.out.println("Who am I?");
+		//
+		// System.out.println("show prefix" + data.prefix().size());
+		// for (int i = 0; i < data.prefix().size(); i++)
+		// System.out.println(data.prefix().get(i));
 
 		// Show Result
 		if (data.getAggn() == Aggregation.COUNT)
 			showCountResult(s, data.isAllField(), data.fields());
 		else if (data.getAggn() == Aggregation.SUM)
 			showSumResult(s, data.fields().get(0));
-		else
+		else if (data.prefix().size() == 0)
 			showQueryResult(s, data.fields(), displaysize);
+		else if (isDupField)
+			showQueryResultForDupField(s, data, displaysize);
+		else
+			showQueryResult(s, data.fields(), displaysize, data.prefix());
 
 	}
 
@@ -113,6 +129,63 @@ public class QueryPlanner {
 		}
 	}
 
+	private void showQueryResult(Scan s, List<String> fields,
+			List<Integer> displaysize, List<String> prefix) throws Exception {
+		for (int i = 0; i < fields.size(); i++) {
+			String fmt = "%"
+					+ (displaysize.get(i) + 2 + prefix.get(i).length()) + "s";
+			if (!prefix.get(i).isEmpty())
+				System.out.format(fmt, prefix.get(i) + "." + fields.get(i));
+			else
+				System.out.format(fmt, fields.get(i));
+		}
+		System.out.println();
+		s.beforeFirst();
+		while (s.next()) {
+			for (int i = 0; i < fields.size(); i++) {
+				String fmt = "%"
+						+ (displaysize.get(i) + 2 + prefix.get(i).length())
+						+ "s";
+				System.out.format(fmt, s.getVal(fields.get(i)).getValue());
+			}
+			System.out.println();
+		}
+	}
+
+	private void showQueryResultForDupField(Scan s, QueryData data,
+			List<Integer> displaysize) throws Exception {
+		List<String> fields = data.fields();
+		List<String> prefix = data.prefix();
+		Map<String, String> pftb = new HashMap<String, String>();
+
+		pftb.put(data.getNickname1(), data.getTable1());
+		pftb.put(data.getTable1(), data.getTable1());
+		pftb.put(data.getNickname2(), data.getTable2());
+		pftb.put(data.getTable2(), data.getTable2());
+
+		for (int i = 0; i < fields.size(); i++) {
+			String fmt = "%"
+					+ (displaysize.get(i) + 2 + prefix.get(i).length()) + "s";
+			if (!prefix.get(i).isEmpty())
+				System.out.format(fmt, prefix.get(i) + "." + fields.get(i));
+			else
+				System.out.format(fmt, fields.get(i));
+		}
+		System.out.println();
+		s.beforeFirst();
+		while (s.next()) {
+			for (int i = 0; i < fields.size(); i++) {
+				String fmt = "%"
+						+ (displaysize.get(i) + 2 + prefix.get(i).length())
+						+ "s";
+				System.out.format(fmt,
+						s.getVal(fields.get(i), pftb.get(prefix.get(i)))
+								.getValue());
+			}
+			System.out.println();
+		}
+	}
+
 	private void showCountResult(Scan s, boolean isAllField, List<String> fields)
 			throws Exception {
 		// can't detect null
@@ -123,7 +196,7 @@ public class QueryPlanner {
 		else
 			for (int i = 0; i < fields.size(); i++) {
 				System.out.print(fields.get(i));
-				if (i != fields.size())
+				if (i != fields.size() - 1)
 					System.out.print(", ");
 			}
 		System.out.println(")");

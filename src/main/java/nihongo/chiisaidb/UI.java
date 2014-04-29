@@ -91,7 +91,7 @@ public class UI {
 			String testTblName2 = "Enroll";
 			Schema sch2 = new Schema();
 			sch2.addField("ClassName", new VarcharType(20));
-			sch2.addField("StudentId", new IntegerType());
+			sch2.addField("ID", new IntegerType());
 			Chiisai.mdMgr().createTable(testTblName2, sch2);
 
 			Chiisai.mdMgr().showMetadata();

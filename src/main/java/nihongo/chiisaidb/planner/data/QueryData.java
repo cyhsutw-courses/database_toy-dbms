@@ -76,6 +76,14 @@ public class QueryData {
 		this.nickname2 = nickname2;
 	}
 
+	public String getNickname1() {
+		return nickname1;
+	}
+
+	public String getNickname2() {
+		return nickname2;
+	}
+
 	public boolean isAllField() {
 		return isAllField;
 	}
@@ -84,7 +92,7 @@ public class QueryData {
 		return fields;
 	}
 
-	public List<String> Prefix() {
+	public List<String> prefix() {
 		return prefix;
 	}
 

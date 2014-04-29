@@ -54,6 +54,11 @@ public class SelectScan implements Scan {
 	}
 
 	@Override
+	public Constant getVal(String fldName, String tblName) throws Exception {
+		return s.getVal(fldName, tblName);
+	}
+
+	@Override
 	public boolean hasField(String fldName) throws Exception {
 		return s.hasField(fldName);
 	}

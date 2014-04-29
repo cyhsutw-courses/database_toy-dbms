@@ -67,7 +67,7 @@ public class FieldNameExpression implements Expression {
 	 */
 	@Override
 	public Constant evaluate(Record rec) throws Exception {
-		return rec.getVal(fldName);
+		return rec.getVal(fldName, tableName);
 	}
 
 	@Override

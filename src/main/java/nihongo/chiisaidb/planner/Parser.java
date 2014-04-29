@@ -97,7 +97,7 @@ public class Parser {
 			vals = constList();
 			lex.eatDelim(')');
 		}
-		if (!lex.matchDelim(','))
+		if (!lex.matchDelim(';'))
 			throw new UnsupportedOperationException(ErrorMessage.SYNTAX_ERROR);
 		return new InsertData(tblname, flds, vals);
 	}

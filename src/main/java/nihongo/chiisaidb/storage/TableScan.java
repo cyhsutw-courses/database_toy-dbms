@@ -22,9 +22,9 @@ public class TableScan implements Scan {
 	}
 
 	public void insert(List<Constant> values) throws Exception {
-		
+
 		rf.moveFilePointerToLast();
-		
+
 		int fieldNum = values.size();
 		for (int i = 0; i < fieldNum; i++) {
 			rf.setVal(ti.schema().fieldNames().get(i), values.get(i));
@@ -64,6 +64,11 @@ public class TableScan implements Scan {
 
 	@Override
 	public Constant getVal(String fldName) throws Exception {
+		return rf.getVal(fldName);
+	}
+
+	@Override
+	public Constant getVal(String fldName, String tblName) throws Exception {
 		return rf.getVal(fldName);
 	}
 

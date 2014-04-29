@@ -6,6 +6,8 @@ public class ProductScan implements Scan {
 	private Scan s1;
 	private Scan s2;
 	private boolean isLhsEmpty;
+	private String tblName1;
+	private String tblName2;
 
 	/**
 	 * Creates a product scan having the two underlying scans.
@@ -16,11 +18,14 @@ public class ProductScan implements Scan {
 	 *            the RHS scan
 	 * @throws Exception
 	 */
-	public ProductScan(Scan s1, Scan s2) throws Exception {
+	public ProductScan(Scan s1, Scan s2, String tblName1, String tblName2)
+			throws Exception {
 		this.s1 = s1;
 		this.s2 = s2;
 		s1.beforeFirst();
 		isLhsEmpty = !s1.next();
+		this.tblName1 = tblName1;
+		this.tblName2 = tblName2;
 	}
 
 	/**
@@ -73,6 +78,19 @@ public class ProductScan implements Scan {
 			return s1.getVal(fldName);
 		else
 			return s2.getVal(fldName);
+	}
+
+	@Override
+	public Constant getVal(String fldName, String tblName) throws Exception {
+		// System.out.println("tblName:" + tblName);
+		if (tblName.isEmpty())
+			return getVal(fldName);
+		else if (tblName.equals(tblName1))
+			return s1.getVal(fldName);
+		else if (tblName.equals(tblName2))
+			return s2.getVal(fldName);
+		else
+			throw new UnsupportedOperationException();
 	}
 
 	/**

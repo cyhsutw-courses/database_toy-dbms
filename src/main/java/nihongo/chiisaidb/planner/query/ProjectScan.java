@@ -40,6 +40,14 @@ public class ProjectScan implements Scan {
 			throw new RuntimeException("field " + fldName + " not found.");
 	}
 
+	@Override
+	public Constant getVal(String fldName, String tblName) throws Exception {
+		if (hasField(fldName))
+			return s.getVal(fldName, tblName);
+		else
+			throw new RuntimeException("field " + fldName + " not found.");
+	}
+
 	/**
 	 * Returns true if the specified field is in the projection list.
 	 * 

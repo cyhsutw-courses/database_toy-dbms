@@ -9,4 +9,5 @@ public interface Scan extends Record {
 	public boolean next() throws Exception;
 
 	public boolean hasField(String fldName) throws Exception;
+
 }

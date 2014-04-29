@@ -27,7 +27,8 @@ public class RecordFile implements Record {
 	}
 
 	public void moveFilePointerToLast() throws IOException {
-		System.out.println("s--" + (numberOfRecords() * ti.recordSize() + 4));
+		// System.out.println("s--" + (numberOfRecords() * ti.recordSize() +
+		// 4));
 		this.recordId = numberOfRecords();
 		fileMgr.moveFilePointer(fileName, (this.recordId) * ti.recordSize() + 4);
 	}
@@ -68,6 +69,11 @@ public class RecordFile implements Record {
 		return fileMgr.getVal(this.fileName, offset,
 				Type.typeInt(ti.schema().fields().get(fldName)));
 
+	}
+
+	@Override
+	public Constant getVal(String fldName, String tblName) throws IOException {
+		return getVal(fldName);
 	}
 
 	public void setVal(String fldName, Constant newVal) throws IOException {
