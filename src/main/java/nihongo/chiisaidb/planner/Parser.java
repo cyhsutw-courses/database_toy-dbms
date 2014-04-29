@@ -67,9 +67,9 @@ public class Parser {
 			return insert();
 		else if (lex.matchKeyword("create"))
 			return create();
-		else if (lex.matchKeyword("select"))
+		else if (lex.matchKeyword("select")) {
 			return select();
-		else
+		} else
 			throw new UnsupportedOperationException(ErrorMessage.SYNTAX_ERROR);
 
 	}
@@ -96,7 +96,7 @@ public class Parser {
 			vals = constList();
 			lex.eatDelim(')');
 		}
-		if (!lex.matchKeyword(";"))
+		if (!lex.matchDelim(','))
 			throw new UnsupportedOperationException(ErrorMessage.SYNTAX_ERROR);
 		return new InsertData(tblname, flds, vals);
 	}
@@ -115,7 +115,7 @@ public class Parser {
 		lex.eatDelim('(');
 		Schema sch = fieldDefs();
 		lex.eatDelim(')');
-		if (!lex.matchKeyword(";"))
+		if (!lex.matchDelim(';'))
 			throw new UnsupportedOperationException(ErrorMessage.SYNTAX_ERROR);
 		return new CreateTableData(tblname, sch);
 	}
@@ -123,31 +123,30 @@ public class Parser {
 	private QueryData select() {
 		QueryData querydata = new QueryData();
 		lex.eatKeyword("select");
-		if (lex.matchKeyword("*")) {
-			lex.eatKeyword("*");
+		if (lex.matchDelim('*')) {
+			lex.eatDelim('*');
 			querydata.setIsAllField(true);
 		} else {
 			querydata.setIsAllField(false);
-			querydata.addField(id());
+			selectField(querydata);
+
 			while (lex.matchDelim(',')) {
 				lex.eatDelim(',');
-				querydata.addField(id());
+				selectField(querydata);
 			}
 		}
-
 		if (lex.matchKeyword("from")) {
 			lex.eatKeyword("from");
 			String tblname1 = id();
+			querydata.setTable(tblname1);
 			querydata.setNickname1(tblname1);
 			if (lex.matchKeyword("as")) {
 				lex.eatKeyword("as");
 				String nickname1 = id();
 				querydata.setNickname1(nickname1);
 			}
-			if (lex.matchKeyword("where")) {
-				lex.eatKeyword("where");
-				querydata.setPredicate(predicate());
-			} else if (lex.matchKeyword(",")) {
+			if (lex.matchDelim(',')) {
+				lex.eatDelim(',');
 				String tblname2 = id();
 				querydata.setTable(tblname1, tblname2);
 				querydata.setNickname2(tblname2);
@@ -160,17 +159,32 @@ public class Parser {
 					lex.eatKeyword("where");
 					querydata.setPredicate(predicate());
 				}
-			} else if (lex.matchKeyword(";")) {
-				querydata.setTable(tblname1);
-
+			} else if (lex.matchKeyword("where")) {
+				lex.eatKeyword("where");
+				querydata.setPredicate(predicate());
+			} else if (lex.matchDelim(';')) {
 			} else
 				throw new UnsupportedOperationException(
 						ErrorMessage.SYNTAX_ERROR);
-		}
-		if (!lex.matchKeyword(";"))
+		} else
+			throw new UnsupportedOperationException(ErrorMessage.SYNTAX_ERROR);
+
+		if (!lex.matchDelim(';'))
 			throw new UnsupportedOperationException(ErrorMessage.SYNTAX_ERROR);
 
 		return querydata;
+	}
+
+	private void selectField(QueryData querydata) {
+		String name = id();
+		if (lex.matchDelim('.')) {
+			lex.eatDelim('.');
+			querydata.addPrefix(name);
+			querydata.addField(id());
+		} else {
+			querydata.addPrefix("");
+			querydata.addField(name);
+		}
 	}
 
 	private Schema fieldDefs() {

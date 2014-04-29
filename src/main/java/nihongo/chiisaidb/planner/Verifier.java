@@ -150,11 +150,10 @@ public class Verifier {
 
 		String tblName1 = data.getTable1();
 		String tblName2 = data.getTable2();
-
 		// check if table1, table2 not exist
 		if (!Chiisai.mdMgr().hasTable(tblName1))
 			throw new BadSemanticException(ErrorMessage.TABLE_NOT_EXIST);
-		if (!tblName2.equals("")) {
+		if (!tblName2.isEmpty()) {
 			table2exist = true;
 			if (Chiisai.mdMgr().hasTable(tblName2)) {
 				tableInfo2 = Chiisai.mdMgr().getTableInfo(tblName1);
@@ -178,21 +177,27 @@ public class Verifier {
 			if (!table2exist) {
 				while (iteratorFN.hasNext()) {
 					fldName = iteratorFN.next();
-					if (!attriNames.contains(fldName))
+					if (!attriNames.contains(fldName)) {
 						throw new BadSemanticException(
 								ErrorMessage.FIELD_NOT_EXIST);
+					}
 				}
 			} else {
+				tableInfo2 = Chiisai.mdMgr().getTableInfo(tblName2);
 				Schema schema2 = tableInfo2.schema();
 				List<String> attriNames2 = schema2.fieldNames();
 				while (iteratorFN.hasNext()) {
 					fldName = iteratorFN.next();
-					if (!attriNames.contains(fldName))
+					if (!attriNames.contains(fldName)) {
 						// check table2
+						// System.out.println(fldName + " not in " + tblName1);
 						if (!attriNames2.contains(fldName)) {
-						} else
+							// System.out.println(fldName + " not in " +
+							// tblName2);
 							throw new BadSemanticException(
 									ErrorMessage.FIELD_NOT_EXIST);
+						}
+					}
 				}
 			}
 		}

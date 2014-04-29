@@ -9,6 +9,7 @@ import nihongo.chiisaidb.predicate.Predicate;
 public class QueryData {
 	// select
 	private boolean isAllField;
+	private List<String> prefix;
 	private List<String> fields;
 	// from
 	private String table1;
@@ -23,6 +24,7 @@ public class QueryData {
 
 	public QueryData() {
 		fields = new ArrayList<String>();
+		prefix = new ArrayList<String>();
 		this.pred = null;
 		aggn = Aggregation.NONE;
 	}
@@ -30,6 +32,7 @@ public class QueryData {
 	public QueryData(boolean isAllField, Predicate pred) {
 		this.isAllField = isAllField;
 		fields = new ArrayList<String>();
+		prefix = new ArrayList<String>();
 		this.pred = pred;
 		aggn = Aggregation.NONE;
 	}
@@ -43,6 +46,17 @@ public class QueryData {
 
 	public void addField(List<String> fnames) {
 		fields.addAll(fnames);
+	}
+
+	public void addPrefix(String tblname) {
+		if (isAllField)
+			throw new UnsupportedOperationException(
+					"haved been chosen all field.");
+		prefix.add(tblname);
+	}
+
+	public void addPrefix(List<String> tblname) {
+		prefix.addAll(tblname);
 	}
 
 	public void setTable(String tblName) {
@@ -70,6 +84,10 @@ public class QueryData {
 
 	public List<String> fields() {
 		return fields;
+	}
+
+	public List<String> Prefix() {
+		return prefix;
 	}
 
 	public String getTable1() {
