@@ -132,6 +132,7 @@ public class Parser {
 				lex.eatDelim('*');
 				querydata.setIsAllField(true);
 			} else {
+				// Need To Handle Table.*
 				querydata.setIsAllField(false);
 				querydata.addField(id());
 			}
@@ -202,8 +203,14 @@ public class Parser {
 		String name = id();
 		if (lex.matchDelim('.')) {
 			lex.eatDelim('.');
-			querydata.addPrefix(name);
-			querydata.addField(id());
+			if (lex.matchDelim('*')) {
+				lex.eatDelim('*');
+				querydata.addPrefix(name);
+				querydata.addField("*");
+			} else {
+				querydata.addPrefix(name);
+				querydata.addField(id());
+			}
 		} else {
 			querydata.addPrefix("");
 			querydata.addField(name);
