@@ -5,6 +5,7 @@ import java.io.InputStreamReader;
 import java.util.ArrayList;
 import java.util.List;
 
+import nihongo.chiisaidb.inmemory.TableInMemoryScan;
 import nihongo.chiisaidb.metadata.Schema;
 import nihongo.chiisaidb.planner.data.QueryData;
 import nihongo.chiisaidb.planner.query.Aggregation;
@@ -217,6 +218,14 @@ public class UI {
 			data.setAggn(Aggregation.SUM);
 			data.addField("ID");
 			Chiisai.planner().testQuery(data);
+		} else if (command.compareToIgnoreCase("inMemory") == 0) {
+			System.out.println("load　table");
+			Chiisai.imMgr().loadTableInMemory("Student");
+			System.out.println("get TalbleInMemoryScan");
+			TableInMemoryScan tims = Chiisai.imMgr().getTableInMemoryScan(
+					"Student");
+			System.out.println("show columnsMap");
+			tims.showColumnsMap();
 		} else
 			Chiisai.planner().execute(command);
 	}

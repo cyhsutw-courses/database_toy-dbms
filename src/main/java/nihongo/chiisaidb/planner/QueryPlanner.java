@@ -70,6 +70,7 @@ public class QueryPlanner {
 		boolean isDupField = (fset.size() < data.fields().size());
 
 		Scan s = new TableScan(data.getTable1());
+		// Scan s = Chiisai.imMgr().getTableInMemoryScan(data.getTable1());
 		// Product
 		if (!isOnlyOneTable)
 			s = new ProductScan(s, new TableScan(data.getTable2()),
