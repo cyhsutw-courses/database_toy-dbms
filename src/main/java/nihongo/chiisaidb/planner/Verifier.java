@@ -206,8 +206,12 @@ public class Verifier {
 									ErrorMessage.FIELD_NOT_EXIST);
 						}
 						if (!attriNames.contains(fldName)) {
-							throw new BadSemanticException(
-									ErrorMessage.FIELD_NOT_EXIST);
+							if (fldName.equals("*")) {
+								data.setIsAllField(true);
+								// 5/28 new
+							} else
+								throw new BadSemanticException(
+										ErrorMessage.FIELD_NOT_EXIST);
 						}
 					}
 				} else {
@@ -239,6 +243,25 @@ public class Verifier {
 									&& attriNames.contains(fldName)) {
 							} else if (tablename.equals(tblName2)
 									&& attriNames2.contains(fldName)) {
+							} else if (fldName.equals("*")) {
+								// del * & tblname
+								Iterator<String> iteratorAN;
+								if (tablename.equals(tblName1)) {
+									iteratorAN = attriNames.iterator();
+									while (iteratorAN.hasNext()) {
+										fieldNames.add(0, iteratorAN.next());
+										prefixes.add(0, tblName1);
+									}
+								} else {
+									iteratorAN = attriNames2.iterator();
+									while (iteratorAN.hasNext()) {
+										fieldNames.add(0, iteratorAN.next());
+										prefixes.add(0, tblName2);
+									}
+								}
+								// Table.*
+								// use list.add(i, e) Inserts e at index i,
+								// shifting elements up as necessary.
 							} else
 								throw new BadSemanticException(
 										ErrorMessage.FIELD_NOT_EXIST);
