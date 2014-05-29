@@ -76,6 +76,10 @@ public class TableInMemoryScan implements Scan {
 		return getVal(fldName);
 	}
 
+	public void moveToRecordId(int recordId) {
+		ri = recordId;
+	}
+
 	public void showColumnsMap() {
 		System.out.println("showColumnsMap ... " + columnsMap.size() + ", "
 				+ recordNum);

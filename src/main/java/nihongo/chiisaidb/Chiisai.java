@@ -1,5 +1,6 @@
 package nihongo.chiisaidb;
 
+import nigongo.chiisaidb.index.IndexMgr;
 import nihongo.chiisaidb.inmemory.InMemoryMgr;
 import nihongo.chiisaidb.metadata.MetadataMgr;
 import nihongo.chiisaidb.planner.Planner;
@@ -10,6 +11,7 @@ public class Chiisai {
 	private static FileMgr fMgr;
 	private static MetadataMgr mdMgr;
 	private static InMemoryMgr imMgr;
+	private static IndexMgr ixMgr;
 
 	public Chiisai() {
 
@@ -20,6 +22,7 @@ public class Chiisai {
 		fMgr = new FileMgr();
 		mdMgr = new MetadataMgr();
 		imMgr = new InMemoryMgr();
+		ixMgr = new IndexMgr();
 	}
 
 	public static Planner planner() {
@@ -36,6 +39,10 @@ public class Chiisai {
 
 	public static InMemoryMgr imMgr() {
 		return imMgr;
+	}
+
+	public static IndexMgr ixMgr() {
+		return ixMgr;
 	}
 
 	public void showAll() throws Exception {
