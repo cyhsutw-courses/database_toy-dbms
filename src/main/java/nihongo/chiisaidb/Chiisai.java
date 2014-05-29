@@ -1,6 +1,6 @@
 package nihongo.chiisaidb;
 
-import nigongo.chiisaidb.index.IndexMgr;
+import nihongo.chiisaidb.index.IndexMgr;
 import nihongo.chiisaidb.inmemory.InMemoryMgr;
 import nihongo.chiisaidb.metadata.MetadataMgr;
 import nihongo.chiisaidb.planner.Planner;

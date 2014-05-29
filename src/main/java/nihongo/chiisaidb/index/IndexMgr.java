@@ -1,4 +1,4 @@
-package nigongo.chiisaidb.index;
+package nihongo.chiisaidb.index;
 
 import java.util.HashMap;
 import java.util.Map;

@@ -5,9 +5,9 @@ import java.io.InputStreamReader;
 import java.util.ArrayList;
 import java.util.List;
 
-import nigongo.chiisaidb.index.Index;
-import nigongo.chiisaidb.index.IndexKey;
-import nigongo.chiisaidb.index.IndexType;
+import nihongo.chiisaidb.index.Index;
+import nihongo.chiisaidb.index.IndexKey;
+import nihongo.chiisaidb.index.IndexType;
 import nihongo.chiisaidb.inmemory.TableInMemoryScan;
 import nihongo.chiisaidb.metadata.Schema;
 import nihongo.chiisaidb.planner.data.QueryData;

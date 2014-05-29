@@ -1,22 +1,22 @@
-package nigongo.chiisaidb.index;
+package nihongo.chiisaidb.index;
 
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import java.util.TreeMap;
 
 import nihongo.chiisaidb.storage.TableScan;
 import nihongo.chiisaidb.type.Constant;
 import nihongo.chiisaidb.type.Type;
 
-public class HashIndex implements Index {
-	private Map<Constant, List<Integer>> valueToRecordId = new HashMap<Constant, List<Integer>>();
+public class TreeIndex implements Index {
+	private Map<Constant, List<Integer>> valueToRecordId = new TreeMap<Constant, List<Integer>>();
 	private Type fldType;
 	private String fldName;
 	private String tblName;
 
-	public HashIndex(String tblName, String fldName, Type fldType) {
+	public TreeIndex(String tblName, String fldName, Type fldType) {
 		this.fldType = fldType;
 		this.fldName = fldName;
 		this.tblName = tblName;
@@ -60,6 +60,10 @@ public class HashIndex implements Index {
 		}
 	}
 
+	public TreeMap<Constant, List<Integer>> getValueToRecordId() {
+		return (TreeMap<Constant, List<Integer>>) valueToRecordId;
+	}
+
 	public Type getFldType() {
 		return fldType;
 	}
@@ -71,4 +75,5 @@ public class HashIndex implements Index {
 	public String getTblName() {
 		return tblName;
 	}
+
 }

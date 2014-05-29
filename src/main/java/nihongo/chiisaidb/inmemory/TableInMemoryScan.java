@@ -40,8 +40,8 @@ public class TableInMemoryScan implements Scan {
 
 	@Override
 	public boolean next() {
-		if (ri < recordNum - 1) {
-			ri++;
+		ri++;
+		if (ri < recordNum) {
 			return true;
 		} else
 			return false;
@@ -76,8 +76,8 @@ public class TableInMemoryScan implements Scan {
 		return getVal(fldName);
 	}
 
-	public void moveToRecordId(int recordId) {
-		ri = recordId;
+	public void moveToRecordId(Integer recordId) {
+		ri = recordId.intValue();
 	}
 
 	public void showColumnsMap() {
