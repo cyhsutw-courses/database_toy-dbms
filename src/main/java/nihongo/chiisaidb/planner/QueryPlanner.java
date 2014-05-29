@@ -66,9 +66,6 @@ public class QueryPlanner {
 			}
 		}
 
-		Set<String> fset = new HashSet<String>(data.fields());
-		boolean isDupField = (fset.size() < data.fields().size());
-
 		Scan s = new TableScan(data.getTable1());
 		// Scan s = Chiisai.imMgr().getTableInMemoryScan(data.getTable1());
 		// Product
@@ -84,20 +81,8 @@ public class QueryPlanner {
 		if (!data.isAllField())
 			s = new ProjectScan(s, data.fields());
 
-		// if (s instanceof TableScan)
-		// System.out.println("I'm TableScan~");
-		// else if (s instanceof ProductScan)
-		// System.out.println("I'm ProductScan~");
-		// else if (s instanceof SelectScan)
-		// System.out.println("I'm SelectScan~");
-		// else if (s instanceof ProjectScan)
-		// System.out.println("I'm ProjectScan~");
-		// else
-		// System.out.println("Who am I?");
-		//
-		// System.out.println("show prefix" + data.prefix().size());
-		// for (int i = 0; i < data.prefix().size(); i++)
-		// System.out.println(data.prefix().get(i));
+		Set<String> fset = new HashSet<String>(data.fields());
+		boolean isDupField = (fset.size() < data.fields().size());
 
 		// Show Result
 		if (data.getAggn() == Aggregation.COUNT)
