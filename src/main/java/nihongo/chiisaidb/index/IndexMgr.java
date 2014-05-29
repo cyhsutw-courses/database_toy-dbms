@@ -1,9 +1,12 @@
 package nihongo.chiisaidb.index;
 
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 import nihongo.chiisaidb.Chiisai;
+import nihongo.chiisaidb.metadata.TableInfo;
 import nihongo.chiisaidb.type.Type;
 
 public class IndexMgr {
@@ -11,6 +14,19 @@ public class IndexMgr {
 
 	public IndexMgr() {
 
+	}
+
+	public void createAllIndex() {
+		Set<String> tns = Chiisai.mdMgr().getAllTableName();
+		TableInfo ti;
+		for (String tn : tns) {
+			ti = Chiisai.mdMgr().getTableInfo(tn);
+			List<String> l = ti.schema().fieldNames();
+			for (String fn : l) {
+				IndexKey ik = new IndexKey(tn, fn);
+				createIndex(ik, IndexType.TreeIndex);
+			}
+		}
 	}
 
 	public Index getIndex(IndexKey ik) {

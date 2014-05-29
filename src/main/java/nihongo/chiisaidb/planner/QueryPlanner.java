@@ -77,7 +77,9 @@ public class QueryPlanner {
 		// deal with Index
 		Predicate pred = data.pred();
 		if (isOnlyOneTable) {
-			if (pred.getLink() == Link.NONE) {
+			if (pred == null) {
+				// do noting if no predicate
+			} else if (pred.getLink() == Link.NONE) {
 				Term t = pred.getTerm1();
 				if (t.isIndexWorked()) {
 					IndexKey ik = new IndexKey(data.getTable1(),
@@ -105,7 +107,9 @@ public class QueryPlanner {
 		} else {
 			// TableScan in memory for table2
 			Scan s2 = Chiisai.imMgr().getTableInMemoryScan(data.getTable2());
-			if (pred.getLink() == Link.NONE) {
+			if (pred == null) {
+				// do noting if no predicate
+			} else if (pred.getLink() == Link.NONE) {
 				Term t = pred.getTerm1();
 				String tblName = t.getIndexFieldTableName();
 				if (t.isIndexWorked()) {

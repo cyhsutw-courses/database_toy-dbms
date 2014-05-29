@@ -2,6 +2,7 @@ package nihongo.chiisaidb.inmemory;
 
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Set;
 
 import nihongo.chiisaidb.Chiisai;
 import nihongo.chiisaidb.metadata.TableInfo;
@@ -11,6 +12,13 @@ public class InMemoryMgr {
 
 	public InMemoryMgr() {
 
+	}
+
+	public void loadAllTable() {
+		Set<String> tns = Chiisai.mdMgr().getAllTableName();
+		for (String s : tns) {
+			Chiisai.imMgr().loadTableInMemory(s);
+		}
 	}
 
 	public void loadTableInMemory(String tblName) {

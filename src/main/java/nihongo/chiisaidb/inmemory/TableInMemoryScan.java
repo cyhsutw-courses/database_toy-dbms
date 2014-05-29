@@ -107,7 +107,6 @@ public class TableInMemoryScan implements Scan {
 		while (ts.next()) {
 			for (int i = 0; i < fldNames.size(); i++) {
 				String v = ts.getVal(fldNames.get(i)).getValue().toString();
-				System.out.println("value: " + v);
 				columns[i].add(v);
 			}
 		}
