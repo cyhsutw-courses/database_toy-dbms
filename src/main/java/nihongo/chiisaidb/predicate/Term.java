@@ -1,6 +1,7 @@
 package nihongo.chiisaidb.predicate;
 
 import nihongo.chiisaidb.storage.record.Record;
+import nihongo.chiisaidb.type.Constant;
 
 public class Term {
 	public abstract static class Operator {
@@ -98,6 +99,46 @@ public class Term {
 
 	public Expression getRHS() {
 		return rhs;
+	}
+
+	public Operator getOp() {
+		return op;
+	}
+
+	public boolean isIndexWorked() {
+		if (op == Term.OP_NEQ)
+			return false;
+		if (lhs instanceof FieldNameExpression
+				&& rhs instanceof FieldNameExpression)
+			return false;
+		return true;
+	}
+
+	public String getIndexFieldName() {
+		if (lhs instanceof FieldNameExpression)
+			return lhs.asFieldName();
+		else if (rhs instanceof FieldNameExpression)
+			return rhs.asFieldName();
+		else
+			return null;
+	}
+
+	public Constant getIndexTargetValue() {
+		if (lhs instanceof ConstantExpression)
+			return lhs.asConstant();
+		else if (rhs instanceof ConstantExpression)
+			return rhs.asConstant();
+		else
+			return null;
+	}
+
+	public String getIndexFieldTableName() {
+		if (lhs instanceof FieldNameExpression)
+			return ((FieldNameExpression) lhs).asTableName();
+		else if (rhs instanceof FieldNameExpression)
+			return ((FieldNameExpression) rhs).asTableName();
+		else
+			return null;
 	}
 
 	public boolean isSatisfied(Record rec) throws Exception {
