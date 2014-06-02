@@ -236,7 +236,6 @@ public class Verifier {
 						} else {
 							// prefix is not empty
 							String tablename = data.getTable(prefix);
-
 							if (tablename.isEmpty()) {
 								throw new BadSemanticException(
 										ErrorMessage.FIELD_NOT_EXIST);
@@ -253,24 +252,22 @@ public class Verifier {
 								if (tablename.equals(tblName1)) {
 									iteratorAN = attriNames.iterator();
 									while (iteratorAN.hasNext()) {
-										fieldNames.add(0, iteratorAN.next());
-										prefixes.add(0, tblName1);
+										fieldNames.add(iteratorAN.next());
+										prefixes.add(tblName1);
 									}
 								} else {
 									iteratorAN = attriNames2.iterator();
 									while (iteratorAN.hasNext()) {
-										fieldNames.add(0, iteratorAN.next());
-										prefixes.add(0, tblName2);
+										fieldNames.add(iteratorAN.next());
+										prefixes.add(tblName2);
 									}
 								}
-								// Table.*
-								// use list.add(i, e) Inserts e at index i,
-								// shifting elements up as necessary.
+								iteratorFN = fieldNames.iterator();
+								iteratorPR = prefixes.iterator();
 							} else
 								throw new BadSemanticException(
 										ErrorMessage.FIELD_NOT_EXIST);
 						}
-
 					}
 				}
 			} else {
@@ -290,7 +287,6 @@ public class Verifier {
 				}
 			}
 		}
-
 		// check if fldname not exist (where
 		Predicate pred = data.pred();
 		if (pred != null) {

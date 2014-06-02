@@ -107,7 +107,11 @@ public class QueryData {
 	public String getTable(String nickname) {
 		if (nickname.equals(nickname1))
 			return table1;
+		else if (nickname.equals(table1))
+			return table1;
 		else if (nickname.equals(nickname2))
+			return table2;
+		else if (nickname.equals(table2))
 			return table2;
 		else
 			return "";
