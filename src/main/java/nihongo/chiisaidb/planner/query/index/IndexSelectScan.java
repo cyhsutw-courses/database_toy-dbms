@@ -29,7 +29,7 @@ public class IndexSelectScan implements Scan {
 			throw new UnsupportedOperationException();
 		else if (op == Term.OP_EQ)
 			recordIdList.addAll(ix.getRecordIdList(targetValue));
-		else if (op == Term.OP_GT) {
+		else if (op == Term.OP_LT) {
 			if (!(ix instanceof TreeIndex))
 				throw new UnsupportedOperationException();
 			Set<Constant> constants = ((TreeIndex) ix).getValueToRecordId()
@@ -38,7 +38,7 @@ public class IndexSelectScan implements Scan {
 				recordIdList.addAll(ix.getRecordIdList(c));
 			}
 
-		} else if (op == Term.OP_LT) {
+		} else if (op == Term.OP_GT) {
 			if (!(ix instanceof TreeIndex))
 				throw new UnsupportedOperationException();
 			Set<Constant> constants = ((TreeIndex) ix).getValueToRecordId()
@@ -47,6 +47,13 @@ public class IndexSelectScan implements Scan {
 				recordIdList.addAll(ix.getRecordIdList(c));
 			}
 		}
+
+		//
+		System.out.print(ik.getTblName() + "(" + recordIdList.size() + ")");
+		for (Integer i : recordIdList) {
+			System.out.print(" " + i);
+		}
+		System.out.println();
 
 	}
 

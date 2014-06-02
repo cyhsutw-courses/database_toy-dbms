@@ -9,7 +9,6 @@ import java.util.Set;
 
 import nihongo.chiisaidb.Chiisai;
 import nihongo.chiisaidb.index.IndexKey;
-import nihongo.chiisaidb.inmemory.TableInMemoryScan;
 import nihongo.chiisaidb.metadata.Schema;
 import nihongo.chiisaidb.metadata.TableInfo;
 import nihongo.chiisaidb.planner.data.QueryData;
@@ -76,12 +75,11 @@ public class QueryPlanner {
 
 		// TableScan in memory
 		Scan s = Chiisai.imMgr().getTableInMemoryScan(data.getTable1());
-
 		// deal with Index
 		Predicate pred = data.pred();
 		if (isOnlyOneTable) {
 			if (pred == null) {
-				// do noting if no predicate
+				// do nothing if no predicate
 			} else if (pred.getLink() == Link.NONE) {
 				Term t = pred.getTerm1();
 				if (t.isIndexWorked()) {
@@ -90,8 +88,7 @@ public class QueryPlanner {
 					s = new IndexSelectScan(s, ik, t.getIndexTargetValue(),
 							t.getOp());
 				}
-			} else {
-				// Link == AND or Link == OR
+			} else if (pred.getLink() == Link.AND) {
 				Term t1 = pred.getTerm1();
 				Term t2 = pred.getTerm2();
 				if (t1.isIndexWorked()) {
@@ -106,10 +103,20 @@ public class QueryPlanner {
 					s = new IndexSelectScan(s, ik, t2.getIndexTargetValue(),
 							t2.getOp());
 				}
-			}
+			} else if (pred.getLink() == Link.OR) {
+				// do nothing if Link is or, select by SelectScan
+			} else
+				throw new UnsupportedOperationException();
 		} else {
 			// TableScan in memory for table2
-			Scan s2 = Chiisai.imMgr().getTableInMemoryScan(data.getTable2());
+			// check self product
+			String tbn;
+			if (data.getTable1().compareToIgnoreCase(data.getTable2()) == 0)
+				tbn = data.getTable1() + "_copy"; // self product
+			else
+				tbn = data.getTable2();
+			Scan s2 = Chiisai.imMgr().getTableInMemoryScan(tbn);
+
 			if (pred == null) {
 				// do noting if no predicate
 			} else if (pred.getLink() == Link.NONE) {
@@ -117,26 +124,46 @@ public class QueryPlanner {
 				String tblName = t.getIndexFieldTableName();
 				if (t.isIndexWorked()) {
 					IndexKey ik = new IndexKey(tblName, t.getIndexFieldName());
-					s = new IndexSelectScan((TableInMemoryScan) s, ik,
-							t.getIndexTargetValue(), t.getOp());
+					if (tblName.compareToIgnoreCase(data.getTable1()) == 0)
+						s = new IndexSelectScan(s, ik, t.getIndexTargetValue(),
+								t.getOp());
+					else
+						s2 = new IndexSelectScan(s2, ik,
+								t.getIndexTargetValue(), t.getOp());
 				}
-			} else {
-				// Link == AND or Link == OR
+			} else if (pred.getLink() == Link.AND) {
 				Term t1 = pred.getTerm1();
+				String tblName1 = t1.getIndexFieldTableName();
+				// System.out.println("-------------term1 tableName = " +
+				// tblName1
+				// + ", " + t1.getIndexTargetValue().getValue());
 				Term t2 = pred.getTerm2();
+				String tblName2 = t2.getIndexFieldTableName();
+				// System.out.println("-------------term2 tableName = " +
+				// tblName2
+				// + ", " + t2.getIndexTargetValue().getValue());
 				if (t1.isIndexWorked()) {
-					IndexKey ik = new IndexKey(t1.getIndexFieldTableName(),
-							t1.getIndexFieldName());
-					s = new IndexSelectScan(s, ik, t1.getIndexTargetValue(),
-							t1.getOp());
+					IndexKey ik = new IndexKey(tblName1, t1.getIndexFieldName());
+					if (tblName1.compareToIgnoreCase(data.getTable1()) == 0)
+						s = new IndexSelectScan(s, ik,
+								t1.getIndexTargetValue(), t1.getOp());
+					else
+						s2 = new IndexSelectScan(s2, ik,
+								t1.getIndexTargetValue(), t1.getOp());
 				}
 				if (t2.isIndexWorked()) {
-					IndexKey ik = new IndexKey(t2.getIndexFieldTableName(),
-							t2.getIndexFieldName());
-					s = new IndexSelectScan(s, ik, t2.getIndexTargetValue(),
-							t2.getOp());
+					IndexKey ik = new IndexKey(tblName2, t2.getIndexFieldName());
+					if (tblName2.compareToIgnoreCase(data.getTable1()) == 0)
+						s = new IndexSelectScan(s, ik,
+								t2.getIndexTargetValue(), t2.getOp());
+					else
+						s2 = new IndexSelectScan(s2, ik,
+								t2.getIndexTargetValue(), t2.getOp());
 				}
-			}
+			} else if (pred.getLink() == Link.OR) {
+				// do nothing if link is or, select by SelectScan
+			} else
+				throw new UnsupportedOperationException();
 			// Product
 			s = new ProductScan(s, s2, data.getTable1(), data.getTable2());
 		}

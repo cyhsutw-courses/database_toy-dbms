@@ -5,6 +5,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import nihongo.chiisaidb.Chiisai;
 import nihongo.chiisaidb.metadata.Schema;
 import nihongo.chiisaidb.metadata.TableInfo;
 import nihongo.chiisaidb.planner.query.Scan;
@@ -26,7 +27,7 @@ public class TableInMemoryScan implements Scan {
 	public TableInMemoryScan(String tblName, TableInfo ti) throws Exception {
 		this.tblName = tblName;
 		this.sch = ti.schema();
-		this.recordNum = ti.recordSize() / 4 / sch.fieldNames().size();
+		this.recordNum = Chiisai.fMgr().numberOfRecords(ti.fileName());
 
 		columnsMap = new HashMap<String, List<String>>();
 		loadData();
@@ -40,13 +41,13 @@ public class TableInMemoryScan implements Scan {
 
 	@Override
 	public boolean next() {
-		System.out.print(tblName + ".ri = " + ri + "/" + recordNum);
+		// System.out.print(tblName + ".ri = " + ri + "/" + recordNum);
 		ri++;
 		if (ri < recordNum) {
-			System.out.println(" true");
+			// System.out.println(" true");
 			return true;
 		} else {
-			System.out.println(" false");
+			// System.out.println(" false");
 			return false;
 		}
 

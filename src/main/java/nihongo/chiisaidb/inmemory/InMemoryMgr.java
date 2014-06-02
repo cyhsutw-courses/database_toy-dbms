@@ -18,6 +18,7 @@ public class InMemoryMgr {
 		Set<String> tns = Chiisai.mdMgr().getAllTableName();
 		for (String s : tns) {
 			Chiisai.imMgr().loadTableInMemory(s);
+			Chiisai.imMgr().copyTableForSelfProduct(s);
 		}
 	}
 
@@ -26,6 +27,16 @@ public class InMemoryMgr {
 		try {
 			TableInMemoryScan tims = new TableInMemoryScan(tblName, ti);
 			tablesInMemory.put(tblName, tims);
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+	}
+
+	public void copyTableForSelfProduct(String tblName) {
+		TableInfo ti = Chiisai.mdMgr().getTableInfo(tblName);
+		try {
+			TableInMemoryScan tims = new TableInMemoryScan(tblName, ti);
+			tablesInMemory.put(tblName + "_copy", tims);
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
