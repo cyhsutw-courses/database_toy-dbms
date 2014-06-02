@@ -263,7 +263,6 @@ public class Verifier {
 										prefixes.add(0, tblName2);
 									}
 								}
-
 								// Table.*
 								// use list.add(i, e) Inserts e at index i,
 								// shifting elements up as necessary.
