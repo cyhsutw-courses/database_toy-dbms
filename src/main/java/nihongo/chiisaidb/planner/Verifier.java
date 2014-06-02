@@ -218,9 +218,11 @@ public class Verifier {
 					tableInfo2 = Chiisai.mdMgr().getTableInfo(tblName2);
 					Schema schema2 = tableInfo2.schema();
 					List<String> attriNames2 = schema2.fieldNames();
+					int pos = -1;
 					while (iteratorFN.hasNext()) {
 						fldName = iteratorFN.next();
 						prefix = iteratorPR.next();
+						pos++;
 						if (prefix.isEmpty()) {
 							if (!attriNames.contains(fldName)) {
 								if (!attriNames2.contains(fldName))
@@ -246,6 +248,8 @@ public class Verifier {
 							} else if (fldName.equals("*")) {
 								// del * & tblname
 								Iterator<String> iteratorAN;
+								fieldNames.remove(pos);
+								prefixes.remove(pos);
 								if (tablename.equals(tblName1)) {
 									iteratorAN = attriNames.iterator();
 									while (iteratorAN.hasNext()) {
