@@ -10,4 +10,6 @@ public interface Scan extends Record {
 
 	public boolean hasField(String fldName) throws Exception;
 
+	public void moveToRecordId(Integer i);
+
 }

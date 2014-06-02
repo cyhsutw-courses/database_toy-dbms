@@ -98,152 +98,179 @@ public class UI {
 		else if (command.compareToIgnoreCase("Showall") == 0)
 			Chiisai.planner().showAll();
 		else if (command.compareToIgnoreCase("createtable") == 0) {
-			String testTblName = "Student";
+			String testTblName = "student";
 			Schema sch = new Schema();
-			sch.addField("ID", new IntegerType());
-			sch.addField("Name", new VarcharType(7));
-			sch.addField("PeopleType", new VarcharType(5));
+			sch.addField("id", new IntegerType());
+			sch.addField("name", new VarcharType(7));
+			sch.addField("peopletype", new VarcharType(5));
 			Chiisai.mdMgr().createTable(testTblName, sch);
 
-			String testTblName2 = "Enroll";
+			String testTblName2 = "enroll";
 			Schema sch2 = new Schema();
-			sch2.addField("ClassName", new VarcharType(20));
-			sch2.addField("ID", new IntegerType());
+			sch2.addField("classname", new VarcharType(20));
+			sch2.addField("id", new IntegerType());
 			Chiisai.mdMgr().createTable(testTblName2, sch2);
+
+			String testTblName3 = "professor";
+			Schema sch3 = new Schema();
+			sch3.addField("professorname", new VarcharType(20));
+			sch3.addField("age", new IntegerType());
+			Chiisai.mdMgr().createTable(testTblName3, sch3);
 
 			Chiisai.mdMgr().showMetadata();
 		} else if (command.compareToIgnoreCase("insert") == 0) {
-			String testFileName = "Student";
+			String testFileName = "student";
 			TableScan ts = new TableScan(testFileName);
 			List<Constant> vals = new ArrayList<Constant>();
 			vals.add(new IntegerConstant(9962231));
-			vals.add(new VarcharConstant("Mr Chen"));
-			vals.add(new VarcharConstant("OAQ"));
+			vals.add(new VarcharConstant("mr chen"));
+			vals.add(new VarcharConstant("oaq"));
 			ts.insert(vals);
 
 			vals = new ArrayList<Constant>();
 			vals.add(new IntegerConstant(9962210));
-			vals.add(new VarcharConstant("CY Hsu"));
-			vals.add(new VarcharConstant("O O"));
+			vals.add(new VarcharConstant("cy hsu"));
+			vals.add(new VarcharConstant("o o"));
 			ts.insert(vals);
 
-			String testFileName2 = "Enroll";
+			String testFileName2 = "enroll";
 			ts = new TableScan(testFileName2);
 			vals = new ArrayList<Constant>();
-			vals.add(new VarcharConstant("DB"));
+			vals.add(new VarcharConstant("db"));
 			vals.add(new IntegerConstant(9962231));
 			ts.insert(vals);
 
 			vals = new ArrayList<Constant>();
-			vals.add(new VarcharConstant("ML"));
+			vals.add(new VarcharConstant("ml"));
 			vals.add(new IntegerConstant(9962231));
 			ts.insert(vals);
 
 			vals = new ArrayList<Constant>();
-			vals.add(new VarcharConstant("DB"));
+			vals.add(new VarcharConstant("db"));
 			vals.add(new IntegerConstant(9962210));
+			ts.insert(vals);
+
+			String testFileName3 = "professor";
+			ts = new TableScan(testFileName3);
+			vals = new ArrayList<Constant>();
+			vals.add(new VarcharConstant("cc wu"));
+			vals.add(new IntegerConstant(34));
+			ts.insert(vals);
+
+			vals = new ArrayList<Constant>();
+			vals.add(new VarcharConstant("hk hon"));
+			vals.add(new IntegerConstant(38));
 			ts.insert(vals);
 
 			Chiisai.planner().showAll();
 		} else if (command.compareToIgnoreCase("select1") == 0) {
 			System.out.println("select name from student");
 			QueryData data = new QueryData(false, null);
-			data.setTable("Student");
-			data.addField("Name");
+			data.setTable("student");
+			data.addField("name");
 			Chiisai.planner().testQuery(data);
 		} else if (command.compareToIgnoreCase("select2") == 0) {
 			System.out.println("select name from student where id = 9962231");
-			Term t = new Term(new FieldNameExpression("ID"),
+			Term t = new Term(new FieldNameExpression("id"),
 					new ConstantExpression(new IntegerConstant(9962231)),
 					Term.OP_EQ);
 			QueryData data = new QueryData(false, new Predicate(t));
-			data.setTable("Student");
-			data.addField("Name");
+			data.setTable("student");
+			data.addField("name");
 			Chiisai.planner().testQuery(data);
 		} else if (command.compareToIgnoreCase("select3") == 0) {
 			System.out.println("select * from student");
 			QueryData data = new QueryData(true, null);
-			data.setTable("Student");
+			data.setTable("student");
 			Chiisai.planner().testQuery(data);
 
 		} else if (command.compareToIgnoreCase("select4") == 0) {
 			System.out.println("select * from student where id = 9962231");
-			Term t = new Term(new FieldNameExpression("ID"),
+			Term t = new Term(new FieldNameExpression("id"),
 					new ConstantExpression(new IntegerConstant(9962231)),
 					Term.OP_EQ);
 			QueryData data = new QueryData(true, new Predicate(t));
-			data.setTable("Student");
+			data.setTable("student");
 			Chiisai.planner().testQuery(data);
 		} else if (command.compareToIgnoreCase("select5") == 0) {
 			System.out.println("select * from student, enroll");
 			QueryData data = new QueryData(true, null);
-			data.setTable("Student", "Enroll");
+			data.setTable("student", "enroll");
 			Chiisai.planner().testQuery(data);
 		} else if (command.compareToIgnoreCase("select6") == 0) {
 			System.out.println("select name from student, enroll");
 			QueryData data = new QueryData(false, null);
-			data.setTable("Student", "Enroll");
-			data.addField("Name");
+			data.setTable("student", "enroll");
+			data.addField("name");
 			Chiisai.planner().testQuery(data);
 		} else if (command.compareToIgnoreCase("select7") == 0) {
 			System.out
 					.println("select * from student, enroll where id = 9962231");
-			Term t = new Term(new FieldNameExpression("ID"),
-					new ConstantExpression(new IntegerConstant(9962231)),
-					Term.OP_EQ);
+			FieldNameExpression fne = new FieldNameExpression("id");
+			fne.setTableName("student");
+			Term t = new Term(fne, new ConstantExpression(new IntegerConstant(
+					9962231)), Term.OP_EQ);
 			QueryData data = new QueryData(true, new Predicate(t));
-			data.setTable("Student", "Enroll");
+			data.setTable("student", "enroll");
 			Chiisai.planner().testQuery(data);
 		} else if (command.compareToIgnoreCase("select8") == 0) {
-			System.out
-					.println("select * from student, enroll where id = studentid");
-			Term t = new Term(new FieldNameExpression("ID"),
-					new FieldNameExpression("StudentId"), Term.OP_EQ);
+			System.out.println("select * from student, enroll where id = id");
+			FieldNameExpression f1 = new FieldNameExpression("id");
+			f1.setTableName("student");
+			FieldNameExpression f2 = new FieldNameExpression("id");
+			f1.setTableName("enroll");
+			Term t = new Term(f1, f2, Term.OP_EQ);
 			QueryData data = new QueryData(true, new Predicate(t));
-			data.setTable("Student", "Enroll");
+			data.setTable("student", "enroll");
 			Chiisai.planner().testQuery(data);
 		} else if (command.compareToIgnoreCase("count3") == 0) {
 			System.out.println("select count(*) from student");
 			QueryData data = new QueryData(true, null);
-			data.setTable("Student");
+			data.setTable("student");
 			data.setAggn(Aggregation.COUNT);
 			Chiisai.planner().testQuery(data);
 		} else if (command.compareToIgnoreCase("count8") == 0) {
 			System.out
-					.println("select count(*) from student, enroll where id = studentid");
-			Term t = new Term(new FieldNameExpression("ID"),
-					new FieldNameExpression("StudentId"), Term.OP_EQ);
+					.println("select count(*) from student, enroll where id = id");
+			FieldNameExpression f1 = new FieldNameExpression("id");
+			f1.setTableName("student");
+			FieldNameExpression f2 = new FieldNameExpression("id");
+			f1.setTableName("enroll");
+			Term t = new Term(f1, f2, Term.OP_EQ);
 			QueryData data = new QueryData(true, new Predicate(t));
-			data.setTable("Student", "Enroll");
+			data.setTable("student", "enroll");
 			data.setAggn(Aggregation.COUNT);
 			Chiisai.planner().testQuery(data);
 		} else if (command.compareToIgnoreCase("sum3") == 0) {
-			System.out.println("select sum(ID) from student");
+			System.out.println("select sum(id) from student");
 			QueryData data = new QueryData(false, null);
-			data.setTable("Student");
-			data.addField("ID");
+			data.setTable("student");
+			data.addField("id");
 			data.setAggn(Aggregation.SUM);
 			Chiisai.planner().testQuery(data);
 		} else if (command.compareToIgnoreCase("sum8") == 0) {
 			System.out
-					.println("select sum(ID) from student, enroll where id = studentid");
-			Term t = new Term(new FieldNameExpression("ID"),
-					new FieldNameExpression("StudentId"), Term.OP_EQ);
+					.println("select sum(id) from student, enroll where id = id");
+			FieldNameExpression f1 = new FieldNameExpression("id");
+			f1.setTableName("student");
+			FieldNameExpression f2 = new FieldNameExpression("id");
+			f1.setTableName("enroll");
+			Term t = new Term(f1, f2, Term.OP_EQ);
 			QueryData data = new QueryData(false, new Predicate(t));
-			data.setTable("Student", "Enroll");
+			data.setTable("student", "enroll");
 			data.setAggn(Aggregation.SUM);
-			data.addField("ID");
+			data.addField("id");
 			Chiisai.planner().testQuery(data);
 		} else if (command.compareToIgnoreCase("inMemory") == 0) {
 			System.out.println("load　table");
-			Chiisai.imMgr().loadTableInMemory("Student");
+			Chiisai.imMgr().loadTableInMemory("student");
 			System.out.println("get TalbleInMemoryScan");
 			TableInMemoryScan tims = Chiisai.imMgr().getTableInMemoryScan(
-					"Student");
+					"student");
 			System.out.println("show columnsMap");
 			tims.showColumnsMap();
 		} else if (command.compareToIgnoreCase("buildIndex") == 0) {
-			IndexKey ik = new IndexKey("Student", "ID");
+			IndexKey ik = new IndexKey("student", "id");
 			Chiisai.ixMgr().createIndex(ik, IndexType.HashIndex);
 			Index ix = Chiisai.ixMgr().getIndex(ik);
 			ix.showIndex();

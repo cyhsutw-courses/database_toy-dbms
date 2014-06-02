@@ -57,4 +57,10 @@ public class ProjectScan implements Scan {
 	public boolean hasField(String fldName) {
 		return fieldList.contains(fldName);
 	}
+
+	@Override
+	public void moveToRecordId(Integer i) {
+		s.moveToRecordId(i);
+	}
+
 }

@@ -105,4 +105,9 @@ public class ProductScan implements Scan {
 		return s1.hasField(fldName) || s2.hasField(fldName);
 	}
 
+	@Override
+	public void moveToRecordId(Integer i) {
+		// Not implement
+	}
+
 }

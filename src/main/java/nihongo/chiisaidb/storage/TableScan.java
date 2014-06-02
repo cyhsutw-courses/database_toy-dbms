@@ -98,4 +98,10 @@ public class TableScan implements Scan {
 
 		}
 	}
+
+	@Override
+	public void moveToRecordId(Integer i) {
+		// Not implement
+	}
+
 }

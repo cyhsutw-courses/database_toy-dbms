@@ -50,6 +50,11 @@ public class SelectScan implements Scan {
 	}
 
 	@Override
+	public void moveToRecordId(Integer i) {
+		s.moveToRecordId(i);
+	}
+
+	@Override
 	public Constant getVal(String fldName) throws Exception {
 		return s.getVal(fldName);
 	}

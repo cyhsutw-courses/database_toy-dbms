@@ -32,6 +32,9 @@ public class QueryPlanner {
 	}
 
 	public void executeQuery(QueryData data) throws Exception {
+		System.out.println("==================");
+		data.showQueryData();
+		System.out.println("==================");
 		// System.out.println("***isAllField = " + data.isAllField());
 		List<Integer> displaysize = new ArrayList<Integer>();
 		boolean isOnlyOneTable = data.getTable2().isEmpty();
@@ -84,8 +87,8 @@ public class QueryPlanner {
 				if (t.isIndexWorked()) {
 					IndexKey ik = new IndexKey(data.getTable1(),
 							t.getIndexFieldName());
-					s = new IndexSelectScan((TableInMemoryScan) s, ik,
-							t.getIndexTargetValue(), t.getOp());
+					s = new IndexSelectScan(s, ik, t.getIndexTargetValue(),
+							t.getOp());
 				}
 			} else {
 				// Link == AND or Link == OR
@@ -94,14 +97,14 @@ public class QueryPlanner {
 				if (t1.isIndexWorked()) {
 					IndexKey ik = new IndexKey(data.getTable1(),
 							t1.getIndexFieldName());
-					s = new IndexSelectScan((TableInMemoryScan) s, ik,
-							t1.getIndexTargetValue(), t1.getOp());
+					s = new IndexSelectScan(s, ik, t1.getIndexTargetValue(),
+							t1.getOp());
 				}
 				if (t2.isIndexWorked()) {
 					IndexKey ik = new IndexKey(data.getTable1(),
 							t2.getIndexFieldName());
-					s = new IndexSelectScan((TableInMemoryScan) s, ik,
-							t2.getIndexTargetValue(), t2.getOp());
+					s = new IndexSelectScan(s, ik, t2.getIndexTargetValue(),
+							t2.getOp());
 				}
 			}
 		} else {
@@ -124,14 +127,14 @@ public class QueryPlanner {
 				if (t1.isIndexWorked()) {
 					IndexKey ik = new IndexKey(t1.getIndexFieldTableName(),
 							t1.getIndexFieldName());
-					s = new IndexSelectScan((TableInMemoryScan) s, ik,
-							t1.getIndexTargetValue(), t1.getOp());
+					s = new IndexSelectScan(s, ik, t1.getIndexTargetValue(),
+							t1.getOp());
 				}
 				if (t2.isIndexWorked()) {
 					IndexKey ik = new IndexKey(t2.getIndexFieldTableName(),
 							t2.getIndexFieldName());
-					s = new IndexSelectScan((TableInMemoryScan) s, ik,
-							t2.getIndexTargetValue(), t2.getOp());
+					s = new IndexSelectScan(s, ik, t2.getIndexTargetValue(),
+							t2.getOp());
 				}
 			}
 			// Product

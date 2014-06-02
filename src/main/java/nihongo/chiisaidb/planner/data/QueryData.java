@@ -133,4 +133,26 @@ public class QueryData {
 		return aggn;
 	}
 
+	/*
+	 * // select private boolean isAllField; private List<String> prefix;
+	 * private List<String> fields; // from private String table1; private
+	 * String table2; private String nickname1; private String nickname2;
+	 * 
+	 * // where private Predicate pred; // aggn private Aggregation aggn;
+	 */
+	public void showQueryData() {
+		System.out.println("isAllField:" + isAllField);
+		System.out.println("prefix_size:" + prefix.size() + ", fields_size:"
+				+ fields.size());
+		if (prefix.isEmpty() && fields.isEmpty())
+			for (int i = 0; i < prefix.size(); i++)
+				System.out.println(prefix.get(i) + "." + fields.get(i));
+		System.out.println("table1:" + table1);
+		System.out.println("table2:" + table2);
+		System.out.println("nickname1:" + nickname1);
+		System.out.println("nickname2:" + nickname2);
+		System.out.println("predicate==null:" + (pred == null));
+		System.out.println("aggn==null:" + (aggn == Aggregation.NONE));
+	}
+
 }

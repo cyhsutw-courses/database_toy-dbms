@@ -40,11 +40,16 @@ public class TableInMemoryScan implements Scan {
 
 	@Override
 	public boolean next() {
+		System.out.print(tblName + ".ri = " + ri + "/" + recordNum);
 		ri++;
 		if (ri < recordNum) {
+			System.out.println(" true");
 			return true;
-		} else
+		} else {
+			System.out.println(" false");
 			return false;
+		}
+
 	}
 
 	@Override

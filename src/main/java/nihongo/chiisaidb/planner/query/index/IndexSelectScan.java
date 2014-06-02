@@ -8,20 +8,19 @@ import nihongo.chiisaidb.Chiisai;
 import nihongo.chiisaidb.index.Index;
 import nihongo.chiisaidb.index.IndexKey;
 import nihongo.chiisaidb.index.TreeIndex;
-import nihongo.chiisaidb.inmemory.TableInMemoryScan;
 import nihongo.chiisaidb.planner.query.Scan;
 import nihongo.chiisaidb.predicate.Term;
 import nihongo.chiisaidb.predicate.Term.Operator;
 import nihongo.chiisaidb.type.Constant;
 
 public class IndexSelectScan implements Scan {
-	private TableInMemoryScan tims;
+	private Scan s;
 	private List<Integer> recordIdList;
 	private int li;
 
-	public IndexSelectScan(TableInMemoryScan tims, IndexKey ik,
-			Constant targetValue, Operator op) {
-		this.tims = tims;
+	public IndexSelectScan(Scan s, IndexKey ik, Constant targetValue,
+			Operator op) {
+		this.s = s;
 		this.recordIdList = new ArrayList<Integer>();
 
 		// build recordIdList
@@ -33,18 +32,18 @@ public class IndexSelectScan implements Scan {
 		else if (op == Term.OP_GT) {
 			if (!(ix instanceof TreeIndex))
 				throw new UnsupportedOperationException();
-			Set<Constant> s = ((TreeIndex) ix).getValueToRecordId()
+			Set<Constant> constants = ((TreeIndex) ix).getValueToRecordId()
 					.headMap(targetValue).keySet();
-			for (Constant c : s) {
+			for (Constant c : constants) {
 				recordIdList.addAll(ix.getRecordIdList(c));
 			}
 
 		} else if (op == Term.OP_LT) {
 			if (!(ix instanceof TreeIndex))
 				throw new UnsupportedOperationException();
-			Set<Constant> s = ((TreeIndex) ix).getValueToRecordId()
+			Set<Constant> constants = ((TreeIndex) ix).getValueToRecordId()
 					.tailMap(targetValue).keySet();
-			for (Constant c : s) {
+			for (Constant c : constants) {
 				recordIdList.addAll(ix.getRecordIdList(c));
 			}
 		}
@@ -54,32 +53,37 @@ public class IndexSelectScan implements Scan {
 	@Override
 	public void beforeFirst() throws Exception {
 		li = -1;
-		tims.beforeFirst();
+		s.beforeFirst();
 	}
 
 	@Override
 	public boolean next() throws Exception {
 		li++;
 		if (li < recordIdList.size()) {
-			tims.moveToRecordId(recordIdList.get(li));
+			moveToRecordId(recordIdList.get(li));
 			return true;
 		} else
 			return false;
 	}
 
 	@Override
+	public void moveToRecordId(Integer i) {
+		s.moveToRecordId(i);
+	}
+
+	@Override
 	public Constant getVal(String fldName) throws Exception {
-		return tims.getVal(fldName);
+		return s.getVal(fldName);
 	}
 
 	@Override
 	public Constant getVal(String fldName, String tblName) throws Exception {
-		return tims.getVal(fldName, tblName);
+		return s.getVal(fldName, tblName);
 	}
 
 	@Override
 	public boolean hasField(String fldName) throws Exception {
-		return tims.hasField(fldName);
+		return s.hasField(fldName);
 	}
 
 }
