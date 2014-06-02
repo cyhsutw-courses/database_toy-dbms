@@ -5,6 +5,10 @@ import java.io.InputStreamReader;
 import java.util.ArrayList;
 import java.util.List;
 
+import nihongo.chiisaidb.index.Index;
+import nihongo.chiisaidb.index.IndexKey;
+import nihongo.chiisaidb.index.IndexType;
+import nihongo.chiisaidb.inmemory.TableInMemoryScan;
 import nihongo.chiisaidb.metadata.Schema;
 import nihongo.chiisaidb.planner.data.QueryData;
 import nihongo.chiisaidb.planner.query.Aggregation;
@@ -33,7 +37,20 @@ public class UI {
 		 */
 
 		UI ui = new UI();
+		System.out.println("Chiisaidb init ...");
 		Chiisai.init();
+
+		System.out.print("loading tables to memory...");
+		long l = System.currentTimeMillis();
+		Chiisai.imMgr().loadAllTable();
+		long spendms = System.currentTimeMillis() - l;
+		System.out.println(spendms + " ms");
+
+		System.out.print("creating index ...");
+		l = System.currentTimeMillis();
+		Chiisai.ixMgr().createAllIndex();
+		spendms = System.currentTimeMillis() - l;
+		System.out.println(spendms + " ms");
 
 		System.out.println("Chiisaidb start ... by nihongo");
 		System.out.println("(input 'Quit' to terminate)\n");
@@ -217,7 +234,24 @@ public class UI {
 			data.setAggn(Aggregation.SUM);
 			data.addField("ID");
 			Chiisai.planner().testQuery(data);
-		} else
+		} else if (command.compareToIgnoreCase("inMemory") == 0) {
+			System.out.println("load　table");
+			Chiisai.imMgr().loadTableInMemory("Student");
+			System.out.println("get TalbleInMemoryScan");
+			TableInMemoryScan tims = Chiisai.imMgr().getTableInMemoryScan(
+					"Student");
+			System.out.println("show columnsMap");
+			tims.showColumnsMap();
+		} else if (command.compareToIgnoreCase("buildIndex") == 0) {
+			IndexKey ik = new IndexKey("Student", "ID");
+			Chiisai.ixMgr().createIndex(ik, IndexType.HashIndex);
+			Index ix = Chiisai.ixMgr().getIndex(ik);
+			ix.showIndex();
+		} else {
+			long l = System.currentTimeMillis();
 			Chiisai.planner().execute(command);
+			long spendms = System.currentTimeMillis() - l;
+			System.out.println(">>> total " + spendms + " ms");
+		}
 	}
 }

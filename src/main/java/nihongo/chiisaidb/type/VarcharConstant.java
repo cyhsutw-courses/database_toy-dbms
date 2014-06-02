@@ -28,4 +28,9 @@ public class VarcharConstant extends Constant {
 		VarcharConstant sc = (VarcharConstant) c;
 		return val.compareTo(sc.val);
 	}
+
+	@Override
+	public int hashCode() {
+		return val.hashCode();
+	}
 }

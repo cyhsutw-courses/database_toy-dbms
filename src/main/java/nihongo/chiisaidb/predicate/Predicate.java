@@ -11,6 +11,10 @@ public class Predicate {
 	private Term term2;
 	private Link link;
 
+	public Link getLink() {
+		return link;
+	}
+
 	public Predicate(Term singleterm) {
 		term1 = singleterm;
 		term2 = null;

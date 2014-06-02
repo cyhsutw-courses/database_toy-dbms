@@ -35,4 +35,9 @@ public class IntegerConstant extends Constant {
 			throw new IllegalArgumentException();
 	}
 
+	@Override
+	public int hashCode() {
+		return val.hashCode();
+	}
+
 }

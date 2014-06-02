@@ -8,6 +8,8 @@ import java.util.Map;
 import java.util.Set;
 
 import nihongo.chiisaidb.Chiisai;
+import nihongo.chiisaidb.index.IndexKey;
+import nihongo.chiisaidb.inmemory.TableInMemoryScan;
 import nihongo.chiisaidb.metadata.Schema;
 import nihongo.chiisaidb.metadata.TableInfo;
 import nihongo.chiisaidb.planner.data.QueryData;
@@ -16,7 +18,10 @@ import nihongo.chiisaidb.planner.query.ProductScan;
 import nihongo.chiisaidb.planner.query.ProjectScan;
 import nihongo.chiisaidb.planner.query.Scan;
 import nihongo.chiisaidb.planner.query.SelectScan;
-import nihongo.chiisaidb.storage.TableScan;
+import nihongo.chiisaidb.planner.query.index.IndexSelectScan;
+import nihongo.chiisaidb.predicate.Predicate;
+import nihongo.chiisaidb.predicate.Predicate.Link;
+import nihongo.chiisaidb.predicate.Term;
 import nihongo.chiisaidb.type.Constant;
 import nihongo.chiisaidb.type.IntegerConstant;
 
@@ -66,14 +71,72 @@ public class QueryPlanner {
 			}
 		}
 
-		Set<String> fset = new HashSet<String>(data.fields());
-		boolean isDupField = (fset.size() < data.fields().size());
+		// TableScan in memory
+		Scan s = Chiisai.imMgr().getTableInMemoryScan(data.getTable1());
 
-		Scan s = new TableScan(data.getTable1());
-		// Product
-		if (!isOnlyOneTable)
-			s = new ProductScan(s, new TableScan(data.getTable2()),
-					data.getTable1(), data.getTable2());
+		// deal with Index
+		Predicate pred = data.pred();
+		if (isOnlyOneTable) {
+			if (pred == null) {
+				// do noting if no predicate
+			} else if (pred.getLink() == Link.NONE) {
+				Term t = pred.getTerm1();
+				if (t.isIndexWorked()) {
+					IndexKey ik = new IndexKey(data.getTable1(),
+							t.getIndexFieldName());
+					s = new IndexSelectScan((TableInMemoryScan) s, ik,
+							t.getIndexTargetValue(), t.getOp());
+				}
+			} else {
+				// Link == AND or Link == OR
+				Term t1 = pred.getTerm1();
+				Term t2 = pred.getTerm2();
+				if (t1.isIndexWorked()) {
+					IndexKey ik = new IndexKey(data.getTable1(),
+							t1.getIndexFieldName());
+					s = new IndexSelectScan((TableInMemoryScan) s, ik,
+							t1.getIndexTargetValue(), t1.getOp());
+				}
+				if (t2.isIndexWorked()) {
+					IndexKey ik = new IndexKey(data.getTable1(),
+							t2.getIndexFieldName());
+					s = new IndexSelectScan((TableInMemoryScan) s, ik,
+							t2.getIndexTargetValue(), t2.getOp());
+				}
+			}
+		} else {
+			// TableScan in memory for table2
+			Scan s2 = Chiisai.imMgr().getTableInMemoryScan(data.getTable2());
+			if (pred == null) {
+				// do noting if no predicate
+			} else if (pred.getLink() == Link.NONE) {
+				Term t = pred.getTerm1();
+				String tblName = t.getIndexFieldTableName();
+				if (t.isIndexWorked()) {
+					IndexKey ik = new IndexKey(tblName, t.getIndexFieldName());
+					s = new IndexSelectScan((TableInMemoryScan) s, ik,
+							t.getIndexTargetValue(), t.getOp());
+				}
+			} else {
+				// Link == AND or Link == OR
+				Term t1 = pred.getTerm1();
+				Term t2 = pred.getTerm2();
+				if (t1.isIndexWorked()) {
+					IndexKey ik = new IndexKey(t1.getIndexFieldTableName(),
+							t1.getIndexFieldName());
+					s = new IndexSelectScan((TableInMemoryScan) s, ik,
+							t1.getIndexTargetValue(), t1.getOp());
+				}
+				if (t2.isIndexWorked()) {
+					IndexKey ik = new IndexKey(t2.getIndexFieldTableName(),
+							t2.getIndexFieldName());
+					s = new IndexSelectScan((TableInMemoryScan) s, ik,
+							t2.getIndexTargetValue(), t2.getOp());
+				}
+			}
+			// Product
+			s = new ProductScan(s, s2, data.getTable1(), data.getTable2());
+		}
 
 		// Select
 		if (data.pred() != null)
@@ -83,20 +146,8 @@ public class QueryPlanner {
 		if (!data.isAllField())
 			s = new ProjectScan(s, data.fields());
 
-		// if (s instanceof TableScan)
-		// System.out.println("I'm TableScan~");
-		// else if (s instanceof ProductScan)
-		// System.out.println("I'm ProductScan~");
-		// else if (s instanceof SelectScan)
-		// System.out.println("I'm SelectScan~");
-		// else if (s instanceof ProjectScan)
-		// System.out.println("I'm ProjectScan~");
-		// else
-		// System.out.println("Who am I?");
-		//
-		// System.out.println("show prefix" + data.prefix().size());
-		// for (int i = 0; i < data.prefix().size(); i++)
-		// System.out.println(data.prefix().get(i));
+		Set<String> fset = new HashSet<String>(data.fields());
+		boolean isDupField = (fset.size() < data.fields().size());
 
 		// Show Result
 		if (data.getAggn() == Aggregation.COUNT)

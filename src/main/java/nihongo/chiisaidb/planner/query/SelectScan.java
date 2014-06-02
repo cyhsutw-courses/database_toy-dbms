@@ -14,6 +14,7 @@ public class SelectScan implements Scan {
 	 *            the scan of the underlying query
 	 * @param pred
 	 *            the selection predicate
+	 * 
 	 */
 	public SelectScan(Scan s, Predicate pred) {
 		this.s = s;
