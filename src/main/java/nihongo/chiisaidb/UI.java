@@ -22,6 +22,7 @@ import nihongo.chiisaidb.type.IntegerConstant;
 import nihongo.chiisaidb.type.IntegerType;
 import nihongo.chiisaidb.type.VarcharConstant;
 import nihongo.chiisaidb.type.VarcharType;
+import nihongo.chiisaidb.util.SQLSpliter;
 
 public class UI {
 
@@ -97,7 +98,17 @@ public class UI {
 			Chiisai.mdMgr().showMetadata();
 		else if (command.compareToIgnoreCase("Showall") == 0)
 			Chiisai.planner().showAll();
-		else if (command.compareToIgnoreCase("createtable") == 0) {
+		else if (command.compareToIgnoreCase("loadfile") == 0) {
+			SQLSpliter spliter = new SQLSpliter();
+			List<String> sqls = spliter.splitSQLfromFile("SQL_FILE.sql");
+			for (String sql : sqls) {
+				System.out.println(sql);
+				long l = System.currentTimeMillis();
+				Chiisai.planner().execute(command);
+				long spendms = System.currentTimeMillis() - l;
+				System.out.println(">>> total " + spendms + " ms");
+			}
+		} else if (command.compareToIgnoreCase("createtable") == 0) {
 			String testTblName = "student";
 			Schema sch = new Schema();
 			sch.addField("id", new IntegerType());
