@@ -179,7 +179,19 @@ public class Verifier {
 				}
 			}
 		} else {// Aggregation.NONE
-			if (!data.isAllField()) {
+			if(data.temp()==1){
+				
+				if (table2exist) {
+					int i, tablesize1 = attriNames.size();
+					for (i = 0; i < tablesize1; i++) {
+						data.addPrefix(tblName1);
+					}
+				}else{
+					data.setIsAllField(true);
+					
+				}
+				
+			}else if (!data.isAllField()) {
 
 				List<String> fieldNames = data.fields();
 				List<String> prefixes = data.prefix();
