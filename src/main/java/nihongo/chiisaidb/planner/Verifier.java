@@ -167,20 +167,17 @@ public class Verifier {
 		if (data.getAggn() == Aggregation.SUM
 				|| data.getAggn() == Aggregation.COUNT) {
 			List<String> fieldNames = data.fields();
-			if (fieldNames.size() > 1)
-				throw new BadSemanticException(ErrorMessage.INCORRECT_FORMAT);
+			List<String> prefixes = data.prefix();
 			if (!table2exist) {
 				Iterator<String> iteratorFN = fieldNames.iterator();
-				if (iteratorFN.hasNext()) {
+				while (iteratorFN.hasNext()) {
 					fldName = iteratorFN.next();
 					if (!attriNames.contains(fldName)) {
 						throw new BadSemanticException(
 								ErrorMessage.FIELD_NOT_EXIST);
 					}
 				}
-			} else
-				throw new BadSemanticException(ErrorMessage.INCORRECT_FORMAT);
-
+			}
 		} else {// Aggregation.NONE
 			if (!data.isAllField()) {
 
@@ -340,7 +337,6 @@ public class Verifier {
 			QueryData data, List<String> attriNames, String tblName) {
 		if (expression.asTableName().isEmpty())
 			expression.setTableName(tblName);
-
 		String tablename = data.getTable(expression.asTableName());
 		if (tablename.isEmpty())
 			throw new BadSemanticException(ErrorMessage.FIELD_NOT_EXIST);
@@ -355,7 +351,6 @@ public class Verifier {
 	private static void checkField2(FieldNameExpression expression,
 			QueryData data, List<String> attriNames, List<String> attriNames2,
 			String tblName1, String tblName2) {
-
 		if (expression.asTableName().isEmpty()) {
 			if (attriNames.contains(expression.toString()))
 				if (attriNames2.contains(expression.toString()))

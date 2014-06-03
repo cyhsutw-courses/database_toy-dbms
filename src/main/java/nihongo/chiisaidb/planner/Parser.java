@@ -143,6 +143,9 @@ public class Parser {
 			querydata.setIsAllField(false);
 			querydata.setAggn(Aggregation.SUM);
 			lex.eatDelim('(');
+			if (lex.matchDelim('*'))
+				throw new UnsupportedOperationException(
+						ErrorMessage.SYNTAX_ERROR);
 			querydata.addField(id());
 			lex.eatDelim(')');
 
