@@ -150,11 +150,19 @@ public class Parser {
 			querydata.setIsAllField(true);
 
 		} else {
+			System.out.println("hello1");
 			querydata.setIsAllField(false);
 			selectField(querydata);
 			while (lex.matchDelim(',')) {
 				lex.eatDelim(',');
 				selectField(querydata);
+				if(lex.matchDelim('.')){
+					lex.matchDelim('.');
+					if (lex.matchDelim('*')) {
+						lex.eatDelim('*');
+						querydata.setTemp(2);
+					}
+				}
 			}
 		}
 
@@ -203,7 +211,15 @@ public class Parser {
 		if (lex.matchDelim('.')) {
 			lex.eatDelim('.');
 			querydata.addPrefix(name);
-			querydata.addField(id());
+			
+			if (lex.matchDelim('*')) {
+				System.out.println("hello11");
+				lex.eatDelim('*');
+				querydata.setTemp(1);
+				querydata.addField("ALL");
+			}else{
+				querydata.addField(id());
+			}
 		} else {
 			querydata.addPrefix("");
 			querydata.addField(name);

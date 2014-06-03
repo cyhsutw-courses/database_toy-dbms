@@ -18,19 +18,18 @@ import nihongo.chiisaidb.type.IntegerConstant;
 import nihongo.chiisaidb.type.IntegerType;
 import nihongo.chiisaidb.type.VarcharConstant;
 import nihongo.chiisaidb.type.VarcharType;
+import nihongo.chiisaidb.util.SQLSpliter;
 
 public class UI {
 
+	static SQLSpliter spliter = new SQLSpliter();
+	
 	public static void main(String[] args) throws Exception {
 
 		/*
 		 * Added to show how to parse SQLs from a file
 		 */
-		/*
-		 * SQLSpliter spliter = new SQLSpliter(); List<String> sqls =
-		 * spliter.splitSQLfromFile("SQL_FILE.sql"); for(String sql : sqls){
-		 * System.out.println(sql); }
-		 */
+		 
 
 		UI ui = new UI();
 		Chiisai.init();
@@ -217,7 +216,13 @@ public class UI {
 			data.setAggn(Aggregation.SUM);
 			data.addField("ID");
 			Chiisai.planner().testQuery(data);
-		} else
+		}else if(command.indexOf("READ_SQL_FILE")==0){
+			String[] arr = command.split(" ");
+			List<String> sqls = spliter.splitSQLfromFile(arr[1]);
+			for(String sql : sqls){
+				Chiisai.planner().execute(sql);
+			}
+		}else
 			Chiisai.planner().execute(command);
 	}
 }
