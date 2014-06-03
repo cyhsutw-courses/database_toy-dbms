@@ -31,9 +31,9 @@ public class QueryPlanner {
 	}
 
 	public void executeQuery(QueryData data) throws Exception {
-		System.out.println("==================");
-		data.showQueryData();
-		System.out.println("==================");
+		// System.out.println("==================");
+		// data.showQueryData();
+		// System.out.println("==================");
 		// System.out.println("***isAllField = " + data.isAllField());
 		List<Integer> displaysize = new ArrayList<Integer>();
 		boolean isOnlyOneTable = data.getTable2().isEmpty();

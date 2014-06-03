@@ -49,11 +49,11 @@ public class IndexSelectScan implements Scan {
 		}
 
 		//
-		System.out.print(ik.getTblName() + "(" + recordIdList.size() + ")");
-		for (Integer i : recordIdList) {
-			System.out.print(" " + i);
-		}
-		System.out.println();
+		// System.out.print(ik.getTblName() + "(" + recordIdList.size() + ")");
+		// for (Integer i : recordIdList) {
+		// System.out.print(" " + i);
+		// }
+		// System.out.println();
 
 	}
 
