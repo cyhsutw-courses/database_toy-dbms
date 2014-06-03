@@ -44,3 +44,5 @@ select * from student as s, enroll as e where s.id = e.id and e.classname < 'ml'
 
 /* one table star */
 select s.*, e.id from student as s, enroll as e;
+select s.*, e.classname from student as s, enroll as e where s.id = e.id;
+select s.*, p.age from student as s, professor as p where s.id > p.age;
