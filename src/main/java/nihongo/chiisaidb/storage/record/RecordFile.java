@@ -14,11 +14,17 @@ public class RecordFile implements Record {
 	private String fileName;
 	private FileMgr fileMgr = Chiisai.fMgr();
 	private int recordId;
+	private static int recordNum = -1; // number of reocrds
 
 	public RecordFile(TableInfo ti) {
 		this.ti = ti;
 		this.fileName = ti.fileName();
-		this.recordId = 0;
+		this.recordId = -1;
+		// recordNum = -1;
+	}
+
+	public static void reset() {
+		recordNum = -1;
 	}
 
 	public RecordFile(String fileName) {
@@ -29,12 +35,15 @@ public class RecordFile implements Record {
 	public void moveFilePointerToLast() throws IOException {
 		// System.out.println("s--" + (numberOfRecords() * ti.recordSize() +
 		// 4));
-		this.recordId = numberOfRecords();
-		fileMgr.moveFilePointer(fileName, (this.recordId) * ti.recordSize() + 4);
+		recordNum++;
+		fileMgr.moveFilePointer(fileName, (recordNum) * ti.recordSize() + 4);
+		// fileMgr.moveFilePointerToLast(fileName);
+
 	}
 
 	public void beforeFirst() throws Exception {
 		this.recordId = -1;
+		// System.out.println("beforeFirst......QQ");
 		fileMgr.beforeFirst(fileName);
 	}
 
@@ -55,6 +64,7 @@ public class RecordFile implements Record {
 	}
 
 	public void updateNumberOfRecordsBy(int amount) {
+
 		try {
 			fileMgr.updateNumberOfRecordsBy(fileName, amount);
 		} catch (IOException e) {
@@ -78,7 +88,8 @@ public class RecordFile implements Record {
 
 	public void setVal(String fldName, Constant newVal) throws IOException {
 		int offset = this.ti.offset(fldName);
-		offset += (this.recordId * ti.recordSize()) + 4;
+		offset += (recordNum * ti.recordSize()) + 4;
+		// System.out.println("recordNum: " + recordNum);
 		fileMgr.setVal(fileName, offset, newVal);
 	}
 

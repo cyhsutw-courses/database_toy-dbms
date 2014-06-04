@@ -15,9 +15,10 @@ public class TableScan implements Scan {
 	private TableInfo ti;
 	private RecordFile rf;
 
-	public TableScan(String tblName) {
+	public TableScan(String tblName) throws Exception {
 		this.ti = Chiisai.mdMgr().getTableInfo(tblName);
 		this.rf = new RecordFile(this.ti);
+		// rf.beforeFirst();
 	}
 
 	public void insert(List<Constant> values) throws Exception {
@@ -37,7 +38,6 @@ public class TableScan implements Scan {
 		Set<Integer> pkfis = ti.schema().getPrimaryKeyFieldIndexes();
 
 		rf.beforeFirst();
-
 		Constant val;
 		while (rf.next()) {
 			for (int i = 0; i < ti.schema().fieldNames().size(); i++) {
