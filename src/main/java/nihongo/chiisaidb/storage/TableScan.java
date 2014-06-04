@@ -28,7 +28,7 @@ public class TableScan implements Scan {
 		for (int i = 0; i < fieldNum; i++) {
 			rf.setVal(ti.schema().fieldNames().get(i), values.get(i));
 		}
-		rf.updateNumberOfRecordsBy(1);
+		// rf.updateNumberOfRecordsBy(1);
 
 	}
 
