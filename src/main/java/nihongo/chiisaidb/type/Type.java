@@ -2,7 +2,7 @@ package nihongo.chiisaidb.type;
 
 import java.sql.Types;
 
-public class Type {
+public abstract class Type {
 
 	public static int typeInt(Type type) {
 		if (type instanceof VarcharType)
@@ -18,17 +18,23 @@ public class Type {
 			return new IntegerType();
 		else if (typeInt == Types.VARCHAR)
 			return new VarcharType(0);
-		else 
+		else
 			throw new Exception();
-			
+
 	}
-	
+
 	public static Type getType(int typeInt, int arg) throws Exception {
 		if (typeInt == Types.INTEGER)
 			return new IntegerType();
-		else if (typeInt == Types.VARCHAR && arg>=0)
+		else if (typeInt == Types.VARCHAR && arg >= 0)
 			return new VarcharType(arg);
 		else
 			throw new Exception();
 	}
+
+	public abstract int getDisplaySize();
+
+	public abstract int numberOfBytes();
+	
+	public abstract String toString();
 }

@@ -12,6 +12,9 @@ public class ErrorMessage {
 	public static final String PRIMARYKEY_TOO_MANY = "Not support for more than 2 PrimaryKeys.";
 	public static final String PRIMARYKEY_REPEATED = "The primary key value already exist.";
 
+	public static final String FIELD_NOT_EXIST = "Field not exist.";
+	public static final String FIELD_IN_BOTH_TABLE = "The same field in both tables.";
+
 	public static final String NOT_SUPPORT = "UnsupportedOperation.";
 	public static final String SYNTAX_ERROR = "Wrong SQL syntax.";
 }

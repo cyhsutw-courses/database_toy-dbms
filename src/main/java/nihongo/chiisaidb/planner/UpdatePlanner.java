@@ -1,8 +1,8 @@
 package nihongo.chiisaidb.planner;
 
-import java.io.IOException;
-
 import nihongo.chiisaidb.Chiisai;
+import nihongo.chiisaidb.planner.data.CreateTableData;
+import nihongo.chiisaidb.planner.data.InsertData;
 import nihongo.chiisaidb.storage.TableScan;
 
 public class UpdatePlanner {
@@ -15,7 +15,7 @@ public class UpdatePlanner {
 		Chiisai.mdMgr().createTable(data.tableName(), data.schema());
 	}
 
-	public void executeInsert(InsertData data) throws IOException {
+	public void executeInsert(InsertData data) throws Exception {
 		TableScan ts = new TableScan(data.tblName());
 		ts.insert(data.values());
 	}

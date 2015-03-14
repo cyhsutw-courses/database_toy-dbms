@@ -16,4 +16,28 @@ public class IntegerConstant extends Constant {
 		return val;
 	}
 
+	@Override
+	public boolean equals(Object obj) {
+		if (obj == this)
+			return true;
+		if (obj == null)
+			return false;
+		return compareTo((Constant) obj) == 0;
+	}
+
+	@Override
+	public int compareTo(Constant c) {
+		if (c instanceof VarcharConstant)
+			throw new IllegalArgumentException();
+		else if (c instanceof IntegerConstant)
+			return val.compareTo((Integer) c.getValue());
+		else
+			throw new IllegalArgumentException();
+	}
+
+	@Override
+	public int hashCode() {
+		return val.hashCode();
+	}
+
 }
